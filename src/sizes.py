@@ -15,6 +15,7 @@ if padding != 0:
 
 new_size = size + padding
 addr_plus = new_size + 0x80400000
+addr_plus |= 0xA0000000
 
 with open(FILE, "r+b") as f:
     f.seek(0x1064)

@@ -57,7 +57,7 @@ diskInfo diskInfoData =
 {
     .diskStart = 0,
     .diskEnd = 0xDEADBEEF,          // Filled out
-    .vramStart = 0x80400000,
+    .vramStart = K0_TO_K1(0x80400000),
     .vramEnd = 0xDEADBEEF,          // by sizes.py
     .hookTablePtr = &hookTable,
     .unk_014 = {0}
@@ -85,11 +85,6 @@ void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
         }
     }
 }
-
-//void Disk_PlayInit(struct PlayState* play)
-//{
-//    Disk_Init((ddFuncPointers*)0x800FF4B0, &hookTable);
-//}
 
 void DrawRect(Gfx** gfxp, u8 r, u8 g, u8 b, u32 PosX, u32 PosY, u32 Sizex, u32 SizeY)
 {
