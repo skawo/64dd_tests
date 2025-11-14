@@ -1,48 +1,50 @@
 #include "diskC.h"
 
 __attribute__((section(".hookTable")))
-n64ddStruct_80121220 hookTable = 
+ddHookTable hookTable = 
 {
-    .unk_00 = (DiskInitFunc)&__Disk_Init_K1,
-    .unk_04 = NULL,
-    .unk_08 = NULL,
-    .unk_0C = NULL,
-    .unk_10 = NULL,
-    .unk_14 = NULL,
-    .unk_18 = NULL,
-    .unk_1C = NULL,
-    .unk_20 = NULL,
-    .unk_24 = NULL,
-    .unk_28 = NULL,
-    .unk_2C = NULL,
-    .unk_30 = NULL,
-    .unk_34 = NULL,
-    .unk_38 = NULL,
-    .unk_3C = NULL,
-    .unk_40 = NULL,
-    .unk_44 = NULL,
-    .unk_48 = NULL,
+    .diskInit = (DiskInitFunc)&__Disk_Init_K1,
+    .diskDestroy = NULL,
+    .loadRoom = NULL,
+    .sceneInit = NULL,
+    .playInit = NULL,
+    .playDestroy = NULL,
+    .mapDataInit = NULL,
+    .mapDataDestroy = NULL,
+    .mapDataSetDungeons = NULL,
+    .mapExpDestroy = NULL,
+    .mapExpTextureLoad = NULL,
+    .mapMarkInit = NULL,
+    .mapMarkDestroy = NULL,
+    .pauseMapMarkInit = NULL,
+    .pauseMapMarkDestroy = NULL,
+    .kaleidoInit = NULL,
+    .kaleidoDestroy = NULL,
+    .kaleidoLoadDungeonMap = NULL,
+    .getSceneEntry = NULL,
     .unk_4C = { 0 },
-    .unk_54 = NULL,
-    .unk_58 = NULL,
+    .handleEntranceTriggers = NULL,
+    .setMessageTables = NULL,
     .unk_5C = { 0 },
-    .unk_60 = NULL,
-    .unk_64 = NULL,
-    .unk_68 = Disk_GetNESMessage,
+    .loadCreditsMsg = NULL,
+    .loadJapaneseMsg = NULL,
+    .loadEnglishMsg = Disk_GetNESMessage,
 #if OOT_PAL
-    .unk_6C_PAL = NULL,
+    .loadEnglishMsg = NULL,
+    .loadGermanMsg = NULL,
+    .loadFrenchMsg = NULL,
 #endif
-    .unk_6C = Disk_SceneDraw,
-    .unk_70 = NULL,
-    .unk_74 = Disk_GameState,
-    .unk_78 = NULL,
+    .sceneDraw = Disk_SceneDraw,
+    .asyncDma = NULL,
+    .gameStateUpdate = Disk_GameState,
+    .cutsceneSetScript = NULL,
 };
 
 __attribute__((section(".variableRAM")))
 variables64DD vars =
 {
-    .funcTablePtr = (n64ddStruct_800FEE70_pointers*)0xDEADBEEF,
-    .hookTablePtr = (n64ddStruct_80121220*)0xDEADBEEF,
+    .funcTablePtr = (ddFuncPointers*)0xDEADBEEF,
+    .hookTablePtr = (ddHookTable*)0xDEADBEEF,
     .spawnStarwing = false,
 };
 
@@ -52,12 +54,12 @@ struct_801D9C30 diskInfo =
     .diskStart = 0,
     .diskEnd = 0xDEADBEEF,          // Filled out
     .vramStart = 0x80400000,
-    .vramEnd = 0xBEEFDEAD,          // by sizes.py
+    .vramEnd = 0xDEADBEEF,          // by sizes.py
     .hookTablePtr = &hookTable,
     .unk_014 = {0}
 };
 
-void Disk_Init(n64ddStruct_800FEE70_pointers* funcTablePtr, struct n64ddStruct_80121220* hookTablePtr)
+void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
 {
     vars.funcTablePtr = funcTablePtr;
     vars.hookTablePtr = hookTablePtr;
@@ -79,7 +81,7 @@ void DrawRect(Gfx** gfxp, u8 r, u8 g, u8 b, u32 PosX, u32 PosY, u32 Sizex, u32 S
 void Disk_GameState(struct GameState* state)
 {
     //Input* input = state->input;
-    //vars.funcTablePtr->unk_88->save.dayTime += 0x120;
+    //vars.funcTablePtr->saveContext->save.dayTime += 0x120;
 }
 
 void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
@@ -161,6 +163,8 @@ char* msg2 = "Huehuehuehue.\x02";
 s32 Disk_GetNESMessage(struct Font* font)
 {
     MessageContext* msgC = (MessageContext*)((u8*)font - offsetof(MessageContext, font));
+
+    vars.funcTablePtr->loadFromDisk(font->msgBuf, 0x1060, 200);
 
     if (msgC->textId == 0x1002)
     {
