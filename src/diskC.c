@@ -42,6 +42,7 @@ __attribute__((section(".variableRAM")))
 variables64DD vars =
 {
     .funcTablePtr = (n64ddStruct_800FEE70_pointers*)0xDEADBEEF,
+    .hookTablePtr = (n64ddStruct_80121220*)0xDEADBEEF,
     .spawnStarwing = false,
 };
 
@@ -56,9 +57,10 @@ struct_801D9C30 diskInfo =
     .unk_014 = {0}
 };
 
-void Disk_Init(n64ddStruct_800FEE70_pointers* funcPointers, struct n64ddStruct_80121220* funcStruct)
+void Disk_Init(n64ddStruct_800FEE70_pointers* funcTablePtr, struct n64ddStruct_80121220* hookTablePtr)
 {
-    vars.funcTablePtr = funcPointers;
+    vars.funcTablePtr = funcTablePtr;
+    vars.hookTablePtr = hookTablePtr;
 }
 
 void DrawRect(Gfx** gfxp, u8 r, u8 g, u8 b, u32 PosX, u32 PosY, u32 Sizex, u32 SizeY)

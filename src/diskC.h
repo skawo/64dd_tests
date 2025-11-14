@@ -26,11 +26,12 @@ typedef struct struct_801D9C30
 typedef struct variables64DD
 {
     n64ddStruct_800FEE70_pointers* funcTablePtr;
+    n64ddStruct_80121220* hookTablePtr;
     bool spawnStarwing;
 
 } variables64DD;
 
-void Disk_Init(n64ddStruct_800FEE70_pointers* funcPointers, struct n64ddStruct_80121220* funcStruct);
+void Disk_Init(n64ddStruct_800FEE70_pointers* funcTablePtr, struct n64ddStruct_80121220* hookTablePtr);
 void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func);
 void Disk_GameState(struct GameState* state);
 s32 Disk_GetNESMessage(struct Font*);
