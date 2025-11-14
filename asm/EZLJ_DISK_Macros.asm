@@ -19,26 +19,26 @@ macro seekDisk(n) {
 	origin ({n} + {LBA0_OFFSET} + 0x4D08)
 }
 
-define KSEG1(0xA0000000)
+define KSEG1 = 0xA0000000
 
-define CZLJ_DiskLoad(0x00)
-define CZLJ_StaticContext(0x08)
-define CZLJ_Printf(0x28)
-define CZLJ_osCreateMesgQueue(0x4C)
-define CZLJ_osSendMesg(0x50)
-define CZLJ_osJamMesg(0x54)
-define CZLJ_osRecvMesg(0x58)
-define CZLJ_osGetIntMask(0x60)
-define CZLJ_osSetIntMask(0x64)
-define CZLJ_osInvalDCache(0x68)
-define CZLJ_osInvalICache(0x6C)
-define CZLJ_osWritebackDCache(0x70)
-define CZLJ_osWritebackDCacheAll(0x74)
-define CZLJ_SaveContext(0x88)
-define CZLJ_DMARomToRamMesg(0x8C)
-define CZLJ_DMARomToRam(0x90)
-define CZLJ_DirectDMA(0x94)
-define CZLJ_SegmentList(0x9C)
+define CZLJ_DiskLoad = 0x00
+define CZLJ_StaticContext = 0x08
+define CZLJ_Printf = 0x28
+define CZLJ_osCreateMesgQueue = 0x4C
+define CZLJ_osSendMesg = 0x50
+define CZLJ_osJamMesg = 0x54
+define CZLJ_osRecvMesg = 0x58
+define CZLJ_osGetIntMask = 0x60
+define CZLJ_osSetIntMask = 0x64
+define CZLJ_osInvalDCache = 0x68
+define CZLJ_osInvalICache = 0x6C
+define CZLJ_osWritebackDCache = 0x70
+define CZLJ_osWritebackDCacheAll = 0x74
+define CZLJ_SaveContext = 0x88
+define CZLJ_DMARomToRamMesg = 0x8C
+define CZLJ_DMARomToRam = 0x90
+define CZLJ_DirectDMA = 0x94
+define CZLJ_SegmentList = 0x9C
 
 macro n64dd_LoadAddress(register, offset) {
 	//800FEE70 - NTSC 1.0
@@ -188,8 +188,8 @@ macro n64dd_dprintf_num(addr) {
 }
 
 //Table Entry Macros
-global define EZLJ_SCENELIST_COUNT(0)
-macro n64dd_SceneEntry(name, scenestart, titlestart, unk0, renderinit, dd) {
+variable EZLJ_SCENELIST_COUNT = 0
+inline n64dd_SceneEntry(name, scenestart, titlestart, unk0, renderinit, dd) {
 	dw ({scenestart}), ({scenestart} + {scenestart}.size)
 	if {titlestart} != 0 {
 		dw (DDHOOK_SCENETITLECARD), (DDHOOK_SCENETITLECARD + {titlestart}.size)
@@ -205,47 +205,47 @@ macro n64dd_SceneEntry(name, scenestart, titlestart, unk0, renderinit, dd) {
 		dw 0,0
 	}
 
-	global evaluate EZLJ_SCENELIST_COUNT({EZLJ_SCENELIST_COUNT} + 1)
+	EZLJ_SCENELIST_COUNT = EZLJ_SCENELIST_COUNT + 1
 }
 
-macro n64dd_RoomEntry(roomstart) {
+inline n64dd_RoomEntry(roomstart) {
 	dw ({roomstart}), ({roomstart} + {roomstart}.size)
 }
 
-macro n64dd_FileEntry(vfile, vrom, size, load) {
+inline n64dd_FileEntry(vfile, vrom, size, load) {
 	dw ({vfile}), ({vfile}+{size})
 	dw ({vrom})
 	dw ({load})
 }
 
 //RAM Allocation Macros
-global define n64dd_RamAddress(0x80400000)
-macro n64dd_RamSetAddress(addr) {
-	global evaluate n64dd_RamAddress({addr})
+variable n64dd_RamAddress
+inline n64dd_RamSetAddress(addr) {
+	n64dd_RamAddress = {addr}
 }
 
-macro n64dd_RamDefine(label, size) {
-	global variable {label}({n64dd_RamAddress})
-	scope {label} {
-		global variable size({size})
-		global variable end({n64dd_RamAddress}+{size})
-		global variable shi( ({n64dd_RamAddress} + (({n64dd_RamAddress} & 0x8000) * 2) >> 16) )
-		global variable slo( {n64dd_RamAddress} & 0xFFFF )
-		global variable ehi( (({n64dd_RamAddress}+{size}) + ((({n64dd_RamAddress}+{size}) & 0x8000) * 2) >> 16) )
-		global variable elo( ({n64dd_RamAddress}+{size}) & 0xFFFF )
+inline n64dd_RamDefine(label, size) {
+	constant {label} = n64dd_RamAddress
+	namespace {label} {
+		constant size = {size}
+		constant end = n64dd_RamAddress + {size}
+		constant shi = (n64dd_RamAddress + ((n64dd_RamAddress & 0x8000) * 2) >> 16)
+		constant slo = n64dd_RamAddress & 0xFFFF
+		constant ehi = ((n64dd_RamAddress + {size}) + (((n64dd_RamAddress + {size}) & 0x8000) * 2) >> 16)
+		constant elo = (n64dd_RamAddress + {size}) & 0xFFFF
 	}
-	global evaluate n64dd_RamAddress({n64dd_RamAddress}+{size})
-	if (({n64dd_RamAddress} & 0xFFFFFF) > 0x800000) {
+	n64dd_RamAddress = n64dd_RamAddress + {size}
+	if ((n64dd_RamAddress & 0xFFFFFF) > 0x800000) {
 		error "RamDefine goes over the RAM limit."
 	}
 }
 
 macro n64dd_RamAddressDefine(label, addr) {
-	global variable {label}({addr})
+	variable {label} = {addr}
 }
 
 macro n64dd_RamAddressErrorCheck(addr) {
-	if (({n64dd_RamAddress} & 0xFFFFFF) > ({addr} & 0xFFFFFF)) {
+	if ((n64dd_RamAddress & 0xFFFFFF) > ({addr} & 0xFFFFFF)) {
 		error "RamDefine goes over the RAM limit."
 	}
 }
