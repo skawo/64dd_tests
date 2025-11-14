@@ -42,9 +42,9 @@ __attribute__((section(".diskInfo")))
 struct_801D9C30 diskInfo =
 {
     .diskStart = 0,
-    .diskEnd = 0xDEADBEEF,
+    .diskEnd = 0xDEADBEEF,          // Filled out
     .vramStart = 0x80400000,
-    .vramEnd = 0xBEEFDEAD,
+    .vramEnd = 0xBEEFDEAD,          // by sizes.py
     .hookTablePtr = &hookTable,
     .unk_014 = {0}
 };
