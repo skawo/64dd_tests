@@ -4,9 +4,9 @@
 //Uses ARM9 bass
 
 //Ocarina of Time Expansion Hook
-print "- Assemble Expansion Disk Code...\n"
+print "- Insert Disk Code...\n"
 
 seekDisk(0)
-insert DISKCODE,"../src/diskC.bin"
+insert DISKCODE,"../src/diskCode/diskC.bin"
 
 
