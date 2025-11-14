@@ -86,6 +86,11 @@ void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
     }
 }
 
+//void Disk_PlayInit(struct PlayState* play)
+//{
+//    Disk_Init((ddFuncPointers*)0x800FF4B0, &hookTable);
+//}
+
 void DrawRect(Gfx** gfxp, u8 r, u8 g, u8 b, u32 PosX, u32 PosY, u32 Sizex, u32 SizeY)
 {
     Gfx* gfx = *gfxp;
@@ -113,7 +118,7 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     func[play->sceneDrawConfig](play);  
 
     //u32* vi_reg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-    vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", vars.funcTablePtr);
+    //vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", vars.funcTablePtr);
 
     if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
     {

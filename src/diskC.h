@@ -132,6 +132,7 @@ typedef struct globals64DD
 } globals64DD;
 
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr);
+void Disk_PlayInit(struct PlayState* play);
 void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func);
 void Disk_GameState(struct GameState* state);
 s32 Disk_GetNESMessage(struct Font*);

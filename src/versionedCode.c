@@ -23,7 +23,7 @@ void Actor_Spawn_Versioned(u8 gameVer, ActorContext* actorCtx, PlayState* play, 
 
     switch (gameVer)
     {
-        case NTSC_1_0: func = (Actor_SpawnFunc*)0x80025110; break;
+        case NTSC_1_0:
         case NTSC_1_1: func = (Actor_SpawnFunc*)0x80025110; break;
         case NTSC_1_2: func = (Actor_SpawnFunc*)0x80025750; break;
         default: break;
@@ -39,7 +39,7 @@ void bcopy_Versioned(u8 gameVer, const void* __src, void* __dest, int __n)
 
     switch (gameVer)
     {
-        case NTSC_1_0: func = (bcopyFunc*)0x80004DC0; break;
+        case NTSC_1_0:
         case NTSC_1_1: func = (bcopyFunc*)0x80004DC0; break;
         case NTSC_1_2: func = (bcopyFunc*)0x80004FD0; break;
         default: break;
