@@ -7,4 +7,5 @@ EZLE_DawnDusk.ndd
 EZLE_DawnDusk.ndr
 _pj64d.lnk
 *.disk
-tool/gcc
+tool/gcc/linux
+tool/gcc/win
