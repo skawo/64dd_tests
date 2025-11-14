@@ -91,6 +91,8 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     Input* input = play->state.input;
     func[play->sceneDrawConfig](play);  
 
+    //vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen!");
+
     if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
     {
         vars.spawnArwing = false;
@@ -99,7 +101,7 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
         Player* player = GET_PLAYER(play);
 
         Actor_Spawn(&play->actorCtx, play, ACTOR_EN_CLEAR_TAG, player->actor.world.pos.x,
-                    player->actor.world.pos.y + 50.0f, player->actor.world.pos.z, 0, 0, 0, 0);    
+                    player->actor.world.pos.y + 50.0f, player->actor.world.pos.z, 0, 0, 0, 0);   
     }
     
     Gfx* gfxRef = OVERLAY_DISP;
@@ -164,7 +166,7 @@ s32 Disk_GetNESMessage(struct Font* font)
 {
     MessageContext* msgC = (MessageContext*)((u8*)font - offsetof(MessageContext, font));
 
-    vars.funcTablePtr->loadFromDisk(font->msgBuf, 0x1060, 200);
+    //vars.funcTablePtr->loadFromDisk(font->msgBuf, 0x1060, 200);
 
     if (msgC->textId == 0x1002)
     {
