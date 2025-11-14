@@ -13,7 +13,7 @@ ddHookTable hookTable =
     .mapDataDestroy = NULL,
     .mapDataSetDungeons = NULL,
     .mapExpDestroy = NULL,
-    .mapExpTextureLoad = NULL,
+    .mapExpTextureLoadDungeons = NULL,
     .mapMarkInit = NULL,
     .mapMarkDestroy = NULL,
     .pauseMapMarkInit = NULL,
@@ -46,6 +46,10 @@ globals64DD vars =
     .funcTablePtr = (ddFuncPointers*)0xDEADBEEF,
     .hookTablePtr = (ddHookTable*)0xDEADBEEF,
     .spawnArwing = false,
+    .gameVersion = NTSC_1_0,
+    .defaultSfxPos = (Vec3f){0, 0, 0},
+    .defaultFreqAndVolScale = 1.0f,
+    .defaultReverb = 0,
 }; // Size = 0xF60
 
 __attribute__((section(".diskInfo")))
@@ -61,8 +65,25 @@ diskInfo diskInfoData =
 
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
 {
+    funcTablePtr->osWritebackDCacheAll();
+    funcTablePtr->osInvalICache((void*)0x80400000, 0x400000);
+ 
     vars.funcTablePtr = funcTablePtr;
-    vars.hookTablePtr = hookTablePtr;
+    vars.hookTablePtr = hookTablePtr;    
+
+    switch ((u32)funcTablePtr)
+    {
+        case 0x800FEE70: vars.gameVersion = NTSC_1_0; break;
+        case 0x800FF030: vars.gameVersion = NTSC_1_1; break;
+        case 0x800FF4B0: vars.gameVersion = NTSC_1_2; break;
+        default: 
+        {
+            u32* viReg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
+            void* frameBuffer = (void*)K0_TO_K1(*viReg);
+            vars.funcTablePtr->loadFromDisk(frameBuffer, 0x2A508, 0x25800);
+            while (true);
+        }
+    }
 }
 
 void DrawRect(Gfx** gfxp, u8 r, u8 g, u8 b, u32 PosX, u32 PosY, u32 Sizex, u32 SizeY)
@@ -91,17 +112,19 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     Input* input = play->state.input;
     func[play->sceneDrawConfig](play);  
 
-    //vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen!");
+    //u32* vi_reg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
+    vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", vars.funcTablePtr);
 
     if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
     {
         vars.spawnArwing = false;
-        Audio_PlaySfxGeneral(NA_SE_SY_KINSTA_MARK_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        Audio_PlaySfxGeneral_Versioned(vars.gameVersion, NA_SE_SY_KINSTA_MARK_APPEAR, &vars.defaultSfxPos, 4, 
+                                       &vars.defaultFreqAndVolScale, &vars.defaultFreqAndVolScale, &vars.defaultReverb);
         
         Player* player = GET_PLAYER(play);
 
-        Actor_Spawn(&play->actorCtx, play, ACTOR_EN_CLEAR_TAG, player->actor.world.pos.x,
-                    player->actor.world.pos.y + 50.0f, player->actor.world.pos.z, 0, 0, 0, 0);   
+        Actor_Spawn_Versioned(vars.gameVersion, &play->actorCtx, play, ACTOR_EN_CLEAR_TAG, player->actor.world.pos.x,
+                              player->actor.world.pos.y + 50.0f, player->actor.world.pos.z, 0, 0, 0, 0);   
     }
     
     Gfx* gfxRef = OVERLAY_DISP;
@@ -170,13 +193,15 @@ s32 Disk_GetNESMessage(struct Font* font)
 
     if (msgC->textId == 0x1002)
     {
-        bcopy(msg, font->msgBuf, 200);
+        bcopy_Versioned(vars.gameVersion, msg, font->msgBuf, 200);
         vars.spawnArwing = true;
     }
     else
     {
-        bcopy(msg2, font->msgBuf, 200);    
+        bcopy_Versioned(vars.gameVersion, msg2, font->msgBuf, 200);    
     }
     
     return 1;
 }
+
+#include "versionedCode.c"

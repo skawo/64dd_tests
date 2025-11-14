@@ -87,7 +87,7 @@ typedef struct ddHookTable
     /* 0x01C */ s32 (*mapDataDestroy)(struct MapData**);
     /* 0x020 */ s32 (*mapDataSetDungeons)(struct MapData*);
     /* 0x024 */ s32 (*mapExpDestroy)(void);
-    /* 0x028 */ s32 (*mapExpTextureLoad)(struct PlayState*);
+    /* 0x028 */ s32 (*mapExpTextureLoadDungeons)(struct PlayState*);
     /* 0x02C */ s32 (*mapMarkInit)(MapMarkData***);
     /* 0x030 */ s32 (*mapMarkDestroy)(MapMarkData***);
     /* 0x034 */ void (*pauseMapMarkInit)(PauseMapMarksData**);
@@ -98,10 +98,10 @@ typedef struct ddHookTable
     /* 0x048 */ struct SceneTableEntry* (*getSceneEntry)(s32 sceneId, struct SceneTableEntry* sceneTable);
     /* 0x04C */ char unk_4C[0x08];
     /* 0x054 */ s32 (*handleEntranceTriggers)(struct PlayState*);
-#if OOT_NTSC
-    /* 0x058 */ void (*setMessageTables)(struct MessageTableEntry**, struct MessageTableEntry**, struct MessageTableEntry**);
-#else
+#if OOT_PAL
     /* 0x058 */ void (*setMessageTables)(struct MessageTableEntry**, struct MessageTableEntry**, struct MessageTableEntry**, struct MessageTableEntry**);
+#else
+    /* 0x058 */ void (*setMessageTables)(struct MessageTableEntry**, struct MessageTableEntry**, struct MessageTableEntry**);
 #endif
     /* 0x05C */ char unk_5C[0x4];
     /* 0x060 */ s32 (*loadCreditsMsg)(struct Font*);
@@ -123,7 +123,12 @@ typedef struct globals64DD
 {
     ddFuncPointers* funcTablePtr;
     ddHookTable* hookTablePtr;
+    u8 gameVersion;
     bool spawnArwing;
+    Vec3f defaultSfxPos;
+    f32 defaultFreqAndVolScale;
+    s8 defaultReverb;
+
 } globals64DD;
 
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr);
@@ -131,26 +136,10 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func);
 void Disk_GameState(struct GameState* state);
 s32 Disk_GetNESMessage(struct Font*);
 
+void Audio_PlaySfxGeneral_Versioned(u8 gameVer, u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd);
+void Actor_Spawn_Versioned(u8 gameVer, ActorContext* actorCtx, PlayState* play, s16 actorId, f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, s16 params);
+void bcopy_Versioned(u8 gameVer, const void* __src, void* __dest, int __n);
+
 extern void* __Disk_Init_K1;
-
-void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd);
-    asm("Audio_PlaySfxGeneral = 0x800C806C");
-
-Gfx* Gfx_Open(Gfx* gfx);
-    asm("Gfx_Open = 0x800A1AA0");
-
-Gfx* Gfx_Close(Gfx* gfx, Gfx* dst);
-    asm("Gfx_Close = 0x800A1AAC");
-    
-Actor* Actor_Spawn(ActorContext* actorCtx, PlayState* play, s16 actorId, f32 posX, f32 posY, f32 posZ, s16 rotX,
-                   s16 rotY, s16 rotZ, s16 params);
-    asm("Actor_Spawn = 0x80025110");                 
-    
-void bcopy(const void* __src, void* __dest, int __n);
-    asm("bcopy = 0x80004DC0");
-
-asm("gSfxDefaultPos = 0x80104394");
-asm("gSfxDefaultFreqAndVolScale = 0x801043A0");
-asm("gSfxDefaultReverb = 0x801043A8");
 
 #endif // DISKC_H
