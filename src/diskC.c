@@ -38,6 +38,13 @@ n64ddStruct_80121220 hookTable =
     .unk_78 = NULL,
 };
 
+__attribute__((section(".variableRAM")))
+variables64DD vars =
+{
+    .funcTablePtr = (n64ddStruct_800FEE70_pointers*)0xDEADBEEF,
+    .spawnStarwing = false,
+};
+
 __attribute__((section(".diskInfo")))
 struct_801D9C30 diskInfo =
 {
@@ -47,13 +54,6 @@ struct_801D9C30 diskInfo =
     .vramEnd = 0xBEEFDEAD,          // by sizes.py
     .hookTablePtr = &hookTable,
     .unk_014 = {0}
-};
-
-__attribute__((section(".variableRAM")))
-variables64DD vars =
-{
-    .funcTablePtr = (n64ddStruct_800FEE70_pointers*)0xDEADBEEF,
-    .spawnStarwing = false,
 };
 
 void Disk_Init(n64ddStruct_800FEE70_pointers* funcPointers, struct n64ddStruct_80121220* funcStruct)
