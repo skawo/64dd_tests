@@ -1,6 +1,6 @@
 #include "diskC.h"
 
-__attribute__((section(".hookTable")))
+__attribute__((section(".ddHookTable")))
 ddHookTable hookTable = 
 {
     .diskInit = (DiskInitFunc)&__Disk_Init_K1,
@@ -41,15 +41,15 @@ ddHookTable hookTable =
 };
 
 __attribute__((section(".variableRAM")))
-variables64DD vars =
+globals64DD vars =
 {
     .funcTablePtr = (ddFuncPointers*)0xDEADBEEF,
     .hookTablePtr = (ddHookTable*)0xDEADBEEF,
-    .spawnStarwing = false,
-};
+    .spawnArwing = false,
+}; // Size = 0xF60
 
 __attribute__((section(".diskInfo")))
-struct_801D9C30 diskInfo =
+diskInfo diskInfoData =
 {
     .diskStart = 0,
     .diskEnd = 0xDEADBEEF,          // Filled out
@@ -91,9 +91,9 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     Input* input = play->state.input;
     func[play->sceneDrawConfig](play);  
 
-    if (vars.spawnStarwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
+    if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
     {
-        vars.spawnStarwing = false;
+        vars.spawnArwing = false;
         Audio_PlaySfxGeneral(NA_SE_SY_KINSTA_MARK_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         
         Player* player = GET_PLAYER(play);
@@ -157,7 +157,7 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     OVERLAY_DISP = gfxRef;
 }
 
-char* msg = "STARWING, GO!\x02";
+char* msg = "ARWING, GO!\x02";
 char* msg2 = "Huehuehuehue.\x02";
 
 s32 Disk_GetNESMessage(struct Font* font)
@@ -169,7 +169,7 @@ s32 Disk_GetNESMessage(struct Font* font)
     if (msgC->textId == 0x1002)
     {
         bcopy(msg, font->msgBuf, 200);
-        vars.spawnStarwing = true;
+        vars.spawnArwing = true;
     }
     else
     {

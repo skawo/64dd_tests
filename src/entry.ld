@@ -9,8 +9,8 @@ MEMORY {
 }
 
 SECTIONS {
-    .hookTable 0x80400000 : ALIGN(4) {
-        KEEP(*(.hookTable))
+    .ddHookTable 0x80400000 : ALIGN(4) {
+        KEEP(*(.ddHookTable))
     } > RDRAM
 
     .variableRAM 0x80400100 : ALIGN(4) {

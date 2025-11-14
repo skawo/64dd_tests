@@ -17,7 +17,7 @@ typedef struct ddHookTable ddHookTable;
 
 typedef void (*DiskInitFunc)(ddFuncPointers*, ddHookTable*);   
 
-typedef struct struct_801D9C30 
+typedef struct diskInfo 
 {
     /* 0x000 */ s32 diskStart;     
     /* 0x004 */ s32 diskEnd;       
@@ -25,7 +25,7 @@ typedef struct struct_801D9C30
     /* 0x00C */ uintptr_t vramEnd; 
     /* 0x010 */ ddHookTable* hookTablePtr;
     /* 0x014 */ char unk_014[0x104];
-} struct_801D9C30; // size = 0x118
+} diskInfo; // size = 0x118
 
 typedef struct ddFuncPointers 
 {
@@ -119,12 +119,12 @@ typedef struct ddHookTable
     /* 0x078 */ s32 (*cutsceneSetScript)(struct PlayState*, void*, void*);
 } ddHookTable; // size = ?
 
-typedef struct variables64DD
+typedef struct globals64DD
 {
     ddFuncPointers* funcTablePtr;
     ddHookTable* hookTablePtr;
-    bool spawnStarwing;
-} variables64DD;
+    bool spawnArwing;
+} globals64DD;
 
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr);
 void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func);
