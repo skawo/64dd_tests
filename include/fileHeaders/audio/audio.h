@@ -1,0 +1,22 @@
+#ifndef AUDIO_FILES
+#define AUDIO_FILES
+
+extern unsigned char AUDIOBANK_DAWN_0_BIN[];
+#define AUDIOBANK_DAWN_0_BIN_LEN 117328
+
+extern unsigned char AUDIOBANK_DAWN_2_BIN[];
+#define AUDIOBANK_DAWN_2_BIN_LEN 179648
+
+extern unsigned char AUDIOBANK_DAWN_TABLE_BIN[];
+#define AUDIOBANK_DAWN_TABLE_BIN_LEN 624
+
+extern unsigned char AUDIOINST_DAWN_TABLE_BIN[];
+#define AUDIOINST_DAWN_TABLE_BIN_LEN 448
+
+extern unsigned char AUDIOSEQ_DAWN_BIN[];
+#define AUDIOSEQ_DAWN_BIN_LEN 326272
+
+extern unsigned char AUDIOSEQ_DAWN_TABLE_BIN[];
+#define AUDIOSEQ_DAWN_TABLE_BIN_LEN 1776
+
+#endif // AUDIO_FILES

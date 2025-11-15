@@ -2328,6 +2328,4 @@ unsigned char GREAT_DUSK_CHASM_ROOM_0_ZMAP[] = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 
 };
-unsigned int GREAT_DUSK_CHASM_ROOM_0_ZMAP_LEN = 27888;
-
 #endif // GREAT_DUSK_CHASM_ROOM_0_ZMAP_H

@@ -852,6 +852,4 @@ unsigned char RED_ICE_CAVERN_ROOM_2_ZMAP[] = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 
 };
-unsigned int RED_ICE_CAVERN_ROOM_2_ZMAP_LEN = 10176;
-
 #endif // RED_ICE_CAVERN_ROOM_2_ZMAP_H

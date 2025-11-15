@@ -1,112 +1,75 @@
-ENTRY_POINT = 0x80401200;
+RAM_ORIGIN  = 0x80400000;  
+RAM_LENGTH  = 0x400000;      
+DISKINFO_ADDR = RAM_ORIGIN + 0x1060;
 
-OUTPUT_ARCH( mips )
-OUTPUT_FORMAT( "elf32-bigmips", "elf32-bigmips", "elf32-littlemips" )
-ENTRY( ENTRY_POINT )
+OUTPUT_ARCH(mips)
+OUTPUT_FORMAT("elf32-bigmips", "elf32-bigmips", "elf32-littlemips")
 
 MEMORY {
-    RDRAM (rw) : ORIGIN = 0x80400000, LENGTH = 0x400000
+    RDRAM (rw) : ORIGIN = RAM_ORIGIN, LENGTH = RAM_LENGTH
 }
 
 SECTIONS {
-    .ddHookTable 0x80400000 : ALIGN(4) {
+    .ddHookTable RAM_ORIGIN : ALIGN(32) 
+    {
         KEEP(*(.ddHookTable))
     } > RDRAM
 
-    .variableRAM 0x80400100 : ALIGN(4) {
+    . = ALIGN(32);
+    .variableRAM : ALIGN(32) 
+    {
         KEEP(*(.variableRAM))
-    } > RDRAM	
+    } > RDRAM
 
-    .diskInfo 0x80401060 : ALIGN(4) {
+    .diskInfo DISKINFO_ADDR : ALIGN(32) 
+    {
         KEEP(*(.diskInfo))
-    } > RDRAM	
+    } > RDRAM
 
-	/* Program run addressed defined in `entry.ld` */
-	. = ENTRY_POINT;
+    . = ALIGN(32);
+    .text : ALIGN(32) 
+    {
+        __entry = .;
+        *(EXCLUDE_FILE(*filesystem.o) .text*)
+        *(.init)
+        *(.fini)
+    } > RDRAM
 
-	/* Machine code */
-	.text ALIGN( 4 ):
-	{
-		/* Pad with NULL */
-		FILL( 0 );
+    . = ALIGN(32);
+    .rodata : ALIGN(32) 
+    {
+        *(EXCLUDE_FILE(*filesystem.o) .rodata*)
+        *(.eh_frame*)
+    } > RDRAM
 
-		/* Address to start of text section */
-		__text_start = . ;
+    . = ALIGN(32);
+    .data : ALIGN(32) 
+    {
+        *(EXCLUDE_FILE(*filesystem.o) .data*)
+        *(EXCLUDE_FILE(*filesystem.o) .sdata*)
+    } > RDRAM
 
-		/* Data goes here */
-		*(.init);
-		*(.text);
-		*(.ctors);
-        	*(.dtors);
-        	*(.fini);
-		
-		/* Address to end of text section */
-		. = ALIGN( 16 );
-		__text_end = . ;
-	}
-	
-	/* Initialized data */
-        .data ALIGN( 16 ): 
-	{ 
-		/* Pad with NULL */
-		FILL( 0 );
-		
-		/* Address to start of data section */
-		__data_start = . ;
-		
-		/* Data goes here*/
-		*(.data);
-		*(.data.*);
-		
-		/* Data pointer */
-		. = ALIGN( 8 );
-		_gp = . ;
-		*(.sdata);
-		
-		/* Address to end of data section */
-		. = ALIGN( 16 );
-		__data_end = . ;
-	}
-	
-	/* Read-only data */
-	.rodata ALIGN( 16 ):
-	{
-		/* Pad with NULL */
-		FILL( 0 );
-		
-		/* Address to start of rodata section */
-		__rodata_start = . ;
-		
-		/* Data goes here*/
-		*(.rodata);
-		*(.rodata.*);
-		*(.eh_frame);
-		
-		/* Address to end of rodata section */
-		. = ALIGN( 16 );
-		__rodata_end = . ;
-	}
-	
-	/* Memory initialized to zero */
-        .bss ALIGN( 8 ): 
-	{
-		/* Address to start of BSS section */
-		__bss_start = . ;
-			
-		/* BSS data */
-		*(.scommon);
-		*(.sbss);
-		*(.bss);
-		
-		/* Address to end of BSS section */
-		. = ALIGN( 8 );
-		__bss_end = . ;
-	}
-	
-	/* End of our memory use */
-	. = ALIGN( 8 );
-	end = . ;
- 
+    . = ALIGN(32);
+    .bss : ALIGN(32) 
+    {
+        *(EXCLUDE_FILE(*filesystem.o) COMMON)
+        *(EXCLUDE_FILE(*filesystem.o) .bss*)
+        *(EXCLUDE_FILE(*filesystem.o) .sbss*)
+    } > RDRAM
+
+    . = ALIGN(32);
+    __ramEnd = .;
+
+    __romStart = __ramEnd - RAM_ORIGIN;
+    .rom __romStart : AT(__ramEnd) ALIGN(32) 
+    {
+        *filesystem.o(.text* .rodata* .data* .sdata* .bss* .sbss*)
+    }
+    __romEnd = .;
 }
 
 __Disk_Init_K1 = (0xA0000000 | Disk_Init);
+__Disk_Start     = 0;
+__Disk_End       = __ramEnd - RAM_ORIGIN;
+__Disk_VramStart = (0xA0000000 | RAM_ORIGIN);
+__Disk_VramEnd   = (0xA0000000 | (RAM_ORIGIN + __Disk_End));

@@ -63,9 +63,9 @@ if !{defined NOFILL} {
   fill 0x3DEC800
 }
 
-include "EZLJ_DISK_RAM.asm"
-include "EZLJ_DISK_FileSystem.asm"
-include "EZLJ_DISK_FileSystemPatch.asm"
+//include "EZLJ_DISK_RAM.asm"
+//include "EZLJ_DISK_FileSystem.asm"
+//include "EZLJ_DISK_FileSystemPatch.asm"
 
 //LBA 24 - 64DD IPL Boot
 include "EZLJ_DISK_Boot.asm"

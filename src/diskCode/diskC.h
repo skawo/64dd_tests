@@ -19,10 +19,10 @@ typedef void (*DiskInitFunc)(ddFuncPointers*, ddHookTable*);
 
 typedef struct diskInfo 
 {
-    /* 0x000 */ s32 diskStart;     
-    /* 0x004 */ s32 diskEnd;       
-    /* 0x008 */ uintptr_t vramStart; 
-    /* 0x00C */ uintptr_t vramEnd; 
+    /* 0x000 */ void* diskStart;     
+    /* 0x004 */ void* diskEnd;       
+    /* 0x008 */ void* vramStart; 
+    /* 0x00C */ void* vramEnd; 
     /* 0x010 */ ddHookTable* hookTablePtr;
     /* 0x014 */ char unk_014[0x104];
 } diskInfo; // size = 0x118
@@ -121,6 +121,7 @@ typedef struct ddHookTable
 
 typedef struct globals64DD
 {
+    u32 test;
     ddFuncPointers* funcTablePtr;
     ddHookTable* hookTablePtr;
     u8 gameVersion;
@@ -142,5 +143,9 @@ void Actor_Spawn_Versioned(u8 gameVer, ActorContext* actorCtx, PlayState* play, 
 void bcopy_Versioned(u8 gameVer, const void* __src, void* __dest, int __n);
 
 extern void* __Disk_Init_K1;
+extern void* __Disk_Start;
+extern void* __Disk_End;
+extern void* __Disk_VramStart;
+extern void* __Disk_VramEnd;
 
 #endif // DISKC_H

@@ -1724,6 +1724,4 @@ unsigned char DAWNGROVE_INN_ROOM_0_ZMAP[] = {
 0x00, 0x00, 0x00, 0x00, 0xDF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 
 };
-unsigned int DAWNGROVE_INN_ROOM_0_ZMAP_LEN = 20640;
-
 #endif // DAWNGROVE_INN_ROOM_0_ZMAP_H

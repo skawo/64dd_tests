@@ -8088,6 +8088,4 @@ unsigned char GAMEPLAY_DANGEON_KEEP_BIN[] = {
 0x00, 0x00, 0x00, 0x00, 0xDF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 
 };
-unsigned int GAMEPLAY_DANGEON_KEEP_BIN_LEN = 97008;
-
 #endif // GAMEPLAY_DANGEON_KEEP_BIN_H

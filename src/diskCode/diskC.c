@@ -1,4 +1,5 @@
 #include "diskC.h"
+#include "../../include/fileHeaders/images/images.h"
 
 __attribute__((section(".ddHookTable")))
 ddHookTable hookTable = 
@@ -55,10 +56,10 @@ globals64DD vars =
 __attribute__((section(".diskInfo")))
 diskInfo diskInfoData =
 {
-    .diskStart = 0,
-    .diskEnd = 0xDEADBEEF,          // Filled out
-    .vramStart = K0_TO_K1(0x80400000),
-    .vramEnd = 0xDEADBEEF,          // by sizes.py
+    .diskStart = &__Disk_Start,
+    .diskEnd =   &__Disk_End,          // Filled out
+    .vramStart = &__Disk_VramStart,
+    .vramEnd =   &__Disk_VramEnd,          // by sizes.py
     .hookTablePtr = &hookTable,
     .unk_014 = {0}
 };
@@ -80,7 +81,7 @@ void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
         {
             u32* viReg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
             void* frameBuffer = (void*)K0_TO_K1(*viReg);
-            vars.funcTablePtr->loadFromDisk(frameBuffer, 0x2A508, 0x25800);
+            vars.funcTablePtr->loadFromDisk(frameBuffer, (u32)EZLJ_ERROR_VERSION_BIN, EZLJ_ERROR_VERSION_BIN_LEN);
             while (true);
         }
     }
@@ -113,7 +114,7 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     func[play->sceneDrawConfig](play);  
 
     //u32* vi_reg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-    //vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", vars.funcTablePtr);
+    vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", EZLJ_ERROR_VERSION_BIN_LEN);
 
     if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
     {
