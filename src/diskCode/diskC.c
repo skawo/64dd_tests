@@ -1,6 +1,31 @@
 #include "diskC.h"
 
-__attribute__((section(".ddHookTable")))
+__attribute__((section(".variableRAM")))
+globals64DD vars =
+{
+    .funcTablePtr = (ddFuncPointers*)0xDEADBEEF,
+    .hookTablePtr = (ddHookTable*)0xDEADBEEF,
+    .spawnArwing = false,
+    .gameVersion = NTSC_1_0,
+    .defaultSfxPos = (Vec3f){0, 0, 0},
+    .defaultFreqAndVolScale = 1.0f,
+    .defaultReverb = 0,
+}; // This must be < 0x1060 bytes
+
+__attribute__((section(".diskInfo")))
+diskInfo diskInfoData =
+{
+    .diskStart = &__Disk_Start,
+    .diskEnd =   &__Disk_End,         
+    .vramStart = &__Disk_VramStart,
+    .vramEnd =   &__Disk_VramEnd,  
+    .hookTablePtr = &hookTable,
+    .unk_014 = {0}
+};
+
+__attribute__((section(".errorIPL")))
+#include "../../include/fileHeaders/images/error_screens/EZLJ_ERROR_IPL_YAZ0.h"
+
 ddHookTable hookTable = 
 {
     .diskInit = (DiskInitFunc)&__Disk_Init_K1,
@@ -40,29 +65,6 @@ ddHookTable hookTable =
     .cutsceneSetScript = NULL,
 };
 
-__attribute__((section(".variableRAM")))
-globals64DD vars =
-{
-    .funcTablePtr = (ddFuncPointers*)0xDEADBEEF,
-    .hookTablePtr = (ddHookTable*)0xDEADBEEF,
-    .spawnArwing = false,
-    .gameVersion = NTSC_1_0,
-    .defaultSfxPos = (Vec3f){0, 0, 0},
-    .defaultFreqAndVolScale = 1.0f,
-    .defaultReverb = 0,
-}; // This + ddHookTable must be < 0x1060 bytes
-
-__attribute__((section(".diskInfo")))
-diskInfo diskInfoData =
-{
-    .diskStart = &__Disk_Start,
-    .diskEnd =   &__Disk_End,         
-    .vramStart = &__Disk_VramStart,
-    .vramEnd =   &__Disk_VramEnd,  
-    .hookTablePtr = &hookTable,
-    .unk_014 = {0}
-};
-
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
 {
     funcTablePtr->osWritebackDCacheAll();
@@ -79,8 +81,10 @@ void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
         default: 
         {
             u32* viReg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-            void* frameBuffer = (void*)K0_TO_K1(*viReg);
-            vars.funcTablePtr->loadFromDisk(frameBuffer, (u32)EZLJ_ERROR_VERSION_BIN, EZLJ_ERROR_VERSION_BIN_LEN);
+            u8* frameBuffer = (void*)K0_TO_K1(*viReg);
+            u8* comprBuf = (u8*)0x80600000;
+            vars.funcTablePtr->loadFromDisk(comprBuf, (u32)EZLJ_ERROR_VERSION_YAZ0, EZLJ_ERROR_VERSION_YAZ0_LEN);
+            ddYaz0_Decompress(comprBuf, frameBuffer);
             while (true);
         }
     }
@@ -113,7 +117,7 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     func[play->sceneDrawConfig](play);  
 
     //u32* vi_reg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-    vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", (u32)EZLJ_ERROR_VERSION_BIN);
+    vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", (u32)EZLJ_ERROR_VERSION_YAZ0);
 
     if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
     {

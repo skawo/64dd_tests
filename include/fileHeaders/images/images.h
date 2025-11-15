@@ -13,17 +13,17 @@ extern unsigned char MAP_48X85_STATIC_BIN[];
 extern unsigned char MAP_GRAND_STATIC_BIN[];
 #define MAP_GRAND_STATIC_BIN_LEN 58192
 
-extern unsigned char EZLJ_ERROR_IPL_BIN[];
-#define EZLJ_ERROR_IPL_BIN_LEN 153600
+extern unsigned char EZLJ_ERROR_IPL_YAZ0[];
+#define EZLJ_ERROR_IPL_YAZ0_LEN 28682
 
-extern unsigned char EZLJ_ERROR_SAVE_BIN[];
-#define EZLJ_ERROR_SAVE_BIN_LEN 153600
+extern unsigned char EZLJ_ERROR_SAVE_YAZ0[];
+#define EZLJ_ERROR_SAVE_YAZ0_LEN 3334
 
-extern unsigned char EZLJ_ERROR_VERSION_BIN[];
-#define EZLJ_ERROR_VERSION_BIN_LEN 153600
+extern unsigned char EZLJ_ERROR_VERSION_YAZ0[];
+#define EZLJ_ERROR_VERSION_YAZ0_LEN 4519
 
-extern unsigned char EZLJ_RESET_BIN[];
-#define EZLJ_RESET_BIN_LEN 153600
+extern unsigned char EZLJ_RESET_YAZ0[];
+#define EZLJ_RESET_YAZ0_LEN 3565
 
 extern unsigned char G_PN_0X09_BIN[];
 #define G_PN_0X09_BIN_LEN 6912

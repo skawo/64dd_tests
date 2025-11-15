@@ -10,11 +10,6 @@ MEMORY {
 }
 
 SECTIONS {
-    .ddHookTable RAM_ORIGIN : ALIGN(32) 
-    {
-        KEEP(*(.ddHookTable))
-    } > RDRAM
-
     . = ALIGN(32);
     .variableRAM : ALIGN(32) 
     {
@@ -25,6 +20,12 @@ SECTIONS {
     {
         KEEP(*(.diskInfo))
     } > RDRAM
+
+    __errorIPL = .;
+    .errorIPL : ALIGN(4) 
+    {
+        KEEP(*(.errorIPL))
+    } > RDRAM    
 
     . = ALIGN(32);
     .text : ALIGN(32) 
@@ -73,3 +74,4 @@ __Disk_Start     = 0;
 __Disk_End       = __ramEnd - RAM_ORIGIN;
 __Disk_VramStart = (0xA0000000 | RAM_ORIGIN);
 __Disk_VramEnd   = (0xA0000000 | (RAM_ORIGIN + __Disk_End));
+__ErrorIPL_Start = __errorIPL - RAM_ORIGIN;

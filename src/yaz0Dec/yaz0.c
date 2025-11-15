@@ -1,0 +1,62 @@
+#include "../../include/yaz0.h"
+
+typedef struct Yaz0Header
+{
+    char magic[4];
+    u32 decSize;
+    u32 compInfoOffset;
+    u32 uncompDataOffset;
+} Yaz0Header;
+
+void ddYaz0_Decompress(u8* src, u8* dst)
+{
+    Yaz0Header* header = (Yaz0Header*)src;
+    u32 bitIdx = 0;
+    u8* dstEnd = dst + header->decSize;
+    u32 chunkHeader;
+    u32 nibble;
+    u8* backPtr;
+    u32 chunkSize;
+    u32 off;
+
+    src += sizeof(Yaz0Header);
+
+    do
+    {
+        if (bitIdx == 0)
+        {
+            chunkHeader = *src++;
+            bitIdx = 8;
+        }
+
+        if (chunkHeader & (1 << 7))
+        {
+            *dst = *src;
+            dst++;
+            src++;
+        }
+        else
+        {
+            off = ((*src & 0xF) << 8 | *(src + 1));
+            nibble = *src >> 4;
+            backPtr = dst - off;
+            src += 2;
+
+            chunkSize = (nibble == 0)
+                            ? (u32)(*src++ + 0x12)
+                            : nibble + 2;
+
+            do
+            {
+                *dst++ = *(backPtr++ - 1);
+                chunkSize--;
+            }
+            while (chunkSize != 0);
+        }
+
+        chunkHeader <<= 1;
+        bitIdx--;
+
+    }
+    while (dst != dstEnd);
+}

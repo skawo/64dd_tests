@@ -12,10 +12,11 @@
 #include "../../include/sfx.h"
 #include "../../include/fault.h"
 
-#include "../../include/fileHeaders/filesystem.h"
+#include "../filesystem.h"
 
 typedef struct ddFuncPointers ddFuncPointers;
 typedef struct ddHookTable ddHookTable;
+struct ddHookTable hookTable;
 
 typedef void (*DiskInitFunc)(ddFuncPointers*, ddHookTable*);   
 
@@ -143,6 +144,8 @@ s32 Disk_GetNESMessage(struct Font*);
 void Audio_PlaySfxGeneral_Versioned(u8 gameVer, u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd);
 void Actor_Spawn_Versioned(u8 gameVer, ActorContext* actorCtx, PlayState* play, s16 actorId, f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, s16 params);
 void bcopy_Versioned(u8 gameVer, const void* __src, void* __dest, int __n);
+
+void ddYaz0_Decompress(u8* src, u8* dst);
 
 extern void* __Disk_Init_K1;
 extern void* __Disk_Start;

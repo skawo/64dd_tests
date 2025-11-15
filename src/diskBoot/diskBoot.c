@@ -1,9 +1,10 @@
 #include "diskBoot.h"
 
 void ScreenSetup();
+void ddYaz0_Decompress(u8* src, u8* dst);
 
-#ifndef __FILESYSTEM_START
-    #define __FILESYSTEM_START 0
+#ifndef __EZLJ_ERROR_IPL_ADDR
+    #define __EZLJ_ERROR_IPL_ADDR 0
 #endif
 
 void Disk_Boot()
@@ -11,11 +12,8 @@ void Disk_Boot()
     u32* frameBuffer = (u32*)0x80380000;
     ScreenSetup(frameBuffer);
 
-    u32* graphic = (u32*)((u32)EZLJ_ERROR_IPL_BIN + BLK_SIZE_ZONE0 + __FILESYSTEM_START + 0x80000400);
-
-    for (int i = 0; i < EZLJ_ERROR_IPL_BIN_LEN / 4; i++)
-        frameBuffer[i] = graphic[i];
-
+    u32* graphic = (u32*)(BLK_SIZE_ZONE0 + __EZLJ_ERROR_IPL_ADDR + 0x80000400);
+    ddYaz0_Decompress((u8*)graphic, (u8*)frameBuffer);
 
     while (true);    
 }

@@ -23,7 +23,9 @@ fi
 
 printf "Compiling...\n"
 
-cd src/filesystem
+cd src/yaz0Dec
+make clean && make || { echo "Build failed"; exit 1; }
+cd ../filesystem
 make clean && make || { echo "Build failed"; exit 1; }
 cd ../diskCode
 make clean && make || { echo "Build failed"; exit 1; }
