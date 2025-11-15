@@ -1,4 +1,3 @@
-# Detect OS
 ifeq ($(OS),Windows_NT)
     EXE=win
 else
@@ -11,23 +10,24 @@ OBJCOPY = ../../tool/gcc/$(EXE)/mips64-objcopy
 OBJDUMP = ../../tool/gcc/$(EXE)/mips64-objdump
 CC1_DIR = ../../tool/gcc/$(EXE)
 
-SRCS    = diskC.c filesystem.c 
+SRCS    = diskBoot.c
 
-ADDRESS = 0x80400000
+ADDRESS = 0x80000400
+__FILESYSTEM_START = 
 
 CFLAGS = -G 0 -Os -I../../include/libc -I../../include -fno-toplevel-reorder --std=gnu99 -mtune=vr4300 -mabi=32 -mips3 -mno-check-zero-division -fno-builtin -mno-explicit-relocs -mno-memcpy -fno-reorder-blocks -ffast-math -fno-unsafe-math-optimizations -mno-check-zero-division -fno-optimize-sibling-calls
 
 LDFLAGS = -T entry.ld --emit-relocs
 
-default: diskC.bin
+default: diskBoot.bin
 
-diskC.bin: diskC.o
-	@$(LD) -o diskC.elf diskC.o ../filesystem/filesystem.o $(LDFLAGS)
-	@$(OBJCOPY) -R .MIPS.abiflags -O binary diskC.elf diskC.bin
+diskBoot.bin: diskBoot.o 
+	@$(LD) -o diskBoot.elf diskBoot.o --just-symbols ../filesystem/filesystem.o $(LDFLAGS)
+	@$(OBJCOPY) -R .MIPS.abiflags -O binary diskBoot.elf diskBoot.bin
 
-diskC.o: diskC.c
-	@$(CC) -c diskC.c -B$(CC1_DIR) $(CFLAGS)
+diskBoot.o: diskBoot.c
+	$(eval __FILESYSTEM_START := $(shell $(OBJDUMP) -t ../diskCode/diskC.elf | grep '__Disk_End' | awk '{print $$1}'))
+	@$(CC) -D__FILESYSTEM_START=0x$(__FILESYSTEM_START) -c diskBoot.c -B$(CC1_DIR) $(CFLAGS)
 
 clean:
 	rm -f *.bin *.elf *.o
-

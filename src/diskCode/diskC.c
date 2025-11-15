@@ -50,7 +50,7 @@ globals64DD vars =
     .defaultSfxPos = (Vec3f){0, 0, 0},
     .defaultFreqAndVolScale = 1.0f,
     .defaultReverb = 0,
-}; // Size = 0xF60
+}; // This + ddHookTable must be < 0x1060 bytes
 
 __attribute__((section(".diskInfo")))
 diskInfo diskInfoData =
@@ -113,7 +113,7 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     func[play->sceneDrawConfig](play);  
 
     //u32* vi_reg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-    //vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", EZLJ_ERROR_VERSION_BIN_LEN);
+    vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", (u32)EZLJ_ERROR_VERSION_BIN);
 
     if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
     {

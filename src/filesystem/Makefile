@@ -11,7 +11,7 @@ OBJCOPY = ../../tool/gcc/$(EXE)/mips64-objcopy
 OBJDUMP = ../../tool/gcc/$(EXE)/mips64-objdump
 CC1_DIR = ../../tool/gcc/$(EXE)
 
-SRCS    = diskC.c filesystem.c 
+SRCS    = filesystem.c 
 
 ADDRESS = 0x80400000
 
@@ -19,14 +19,12 @@ CFLAGS = -G 0 -Os -I../../include/libc -I../../include -fno-toplevel-reorder --s
 
 LDFLAGS = -T entry.ld --emit-relocs
 
-default: diskC.bin
+default: filesystem.bin
 
-diskC.bin: diskC.o
-	@$(LD) -o diskC.elf diskC.o ../filesystem/filesystem.o $(LDFLAGS)
-	@$(OBJCOPY) -R .MIPS.abiflags -O binary diskC.elf diskC.bin
+filesystem.bin: filesystem.o
 
-diskC.o: diskC.c
-	@$(CC) -c diskC.c -B$(CC1_DIR) $(CFLAGS)
+filesystem.o: filesystem.c
+	@$(CC) -c filesystem.c -B$(CC1_DIR) $(CFLAGS)
 
 clean:
 	rm -f *.bin *.elf *.o

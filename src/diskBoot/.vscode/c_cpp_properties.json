@@ -3,13 +3,13 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/../include/ultra64",
-                "${workspaceFolder}/../include/libc",
-                "${workspaceFolder}/../include/libc64",
-                "${workspaceFolder}/../include/libu64",
-                "${workspaceFolder}/../include/tables",
-                "${workspaceFolder}/../include/audio",
-                "${workspaceFolder}/../include",
+                "${workspaceFolder}/../../include/ultra64",
+                "${workspaceFolder}/../../include/libc",
+                "${workspaceFolder}/../../include/libc64",
+                "${workspaceFolder}/../../include/libu64",
+                "${workspaceFolder}/../../include/tables",
+                "${workspaceFolder}/../../include/audio",
+                "${workspaceFolder}/../../include"
             ],
             "defines": [
                 "_DEBUG",

@@ -23,9 +23,12 @@ fi
 
 printf "Compiling...\n"
 
-cd src/diskCode
+cd src/filesystem
 make clean && make || { echo "Build failed"; exit 1; }
-#$PY3_CMD ../../tool/sizes.py diskC.bin
+cd ../diskCode
+make clean && make || { echo "Build failed"; exit 1; }
+cd ../diskBoot
+make clean && make || { echo "Build failed"; exit 1; }
 
 cd ..
 cd ..
