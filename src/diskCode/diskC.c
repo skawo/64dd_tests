@@ -1,5 +1,4 @@
 #include "diskC.h"
-#include "../../include/fileHeaders/images/images.h"
 
 __attribute__((section(".ddHookTable")))
 ddHookTable hookTable = 
@@ -57,9 +56,9 @@ __attribute__((section(".diskInfo")))
 diskInfo diskInfoData =
 {
     .diskStart = &__Disk_Start,
-    .diskEnd =   &__Disk_End,          // Filled out
+    .diskEnd =   &__Disk_End,         
     .vramStart = &__Disk_VramStart,
-    .vramEnd =   &__Disk_VramEnd,          // by sizes.py
+    .vramEnd =   &__Disk_VramEnd,  
     .hookTablePtr = &hookTable,
     .unk_014 = {0}
 };
@@ -114,7 +113,7 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     func[play->sceneDrawConfig](play);  
 
     //u32* vi_reg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-    vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", EZLJ_ERROR_VERSION_BIN_LEN);
+    //vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", EZLJ_ERROR_VERSION_BIN_LEN);
 
     if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
     {

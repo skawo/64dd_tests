@@ -12,6 +12,8 @@
 #include "../../include/sfx.h"
 #include "../../include/fault.h"
 
+#include "filesystem.h"
+
 typedef struct ddFuncPointers ddFuncPointers;
 typedef struct ddHookTable ddHookTable;
 
