@@ -13,7 +13,7 @@ SECTIONS {
     .text : ALIGN(32) 
     {
         __entry = .;
-        *(EXCLUDE_FILE(*filesystem.o) .text*)
+        *(.text*)
         *(.init)
         *(.fini)
     } > RDRAM
@@ -21,32 +21,25 @@ SECTIONS {
     . = ALIGN(32);
     .rodata : ALIGN(32) 
     {
-        *(EXCLUDE_FILE(*filesystem.o) .rodata*)
+        *(.rodata*)
         *(.eh_frame*)
     } > RDRAM
 
     . = ALIGN(32);
     .data : ALIGN(32) 
     {
-        *(EXCLUDE_FILE(*filesystem.o) .data*)
-        *(EXCLUDE_FILE(*filesystem.o) .sdata*)
+        *(.data*)
+        *(.sdata*)
     } > RDRAM
 
     . = ALIGN(32);
     .bss : ALIGN(32) 
     {
-        *(EXCLUDE_FILE(*filesystem.o) COMMON)
-        *(EXCLUDE_FILE(*filesystem.o) .bss*)
-        *(EXCLUDE_FILE(*filesystem.o) .sbss*)
+        *(COMMON)
+        *(.bss*)
+        *(.sbss*)
     } > RDRAM
 
     . = ALIGN(32);
-    __ramEnd = .;
-    
-    __romStart = __ramEnd - RAM_ORIGIN;
-    .rom __romStart : AT(__ramEnd) ALIGN(32) 
-    {
-        *filesystem.o(.text* .rodata* .data* .sdata* .bss* .sbss*)
-    }
-    __romEnd = .;    
+    __ramEnd = .; 
 }

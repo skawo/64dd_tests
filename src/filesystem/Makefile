@@ -17,8 +17,6 @@ ADDRESS = 0x80400000
 
 CFLAGS = -G 0 -Os -I../../include/libc -I../../include -fno-toplevel-reorder --std=gnu99 -mtune=vr4300 -mabi=32 -mips3 -mno-check-zero-division -fno-builtin -mno-explicit-relocs -mno-memcpy -fno-reorder-blocks -ffast-math -fno-unsafe-math-optimizations -mno-check-zero-division -fno-optimize-sibling-calls
 
-LDFLAGS = -T entry.ld --emit-relocs
-
 default: filesystem.bin
 
 filesystem.bin: filesystem.o

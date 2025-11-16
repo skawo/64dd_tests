@@ -22,7 +22,7 @@ LDFLAGS = -T entry.ld --emit-relocs
 default: diskC.bin
 
 diskC.bin: diskC.o
-	@$(LD) -o diskC.elf diskC.o ../yaz0Dec/yaz0.o ../filesystem/filesystem.o $(LDFLAGS)
+	@$(LD) -o diskC.elf diskC.o ../ddTool/ddTool.o ../filesystem/filesystem.o $(LDFLAGS)
 	@$(OBJCOPY) -R .MIPS.abiflags -O binary diskC.elf diskC.bin
 
 diskC.o: diskC.c

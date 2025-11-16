@@ -31,7 +31,7 @@ fi
 
 printf "Compiling...\n"
 
-cd src/yaz0Dec
+cd src/ddTool
 eval "$MAKE_CMD" ||  { echo "Build failed"; exit 1; }
 cd ../filesystem
 eval "$MAKE_CMD" || { echo "Build failed"; exit 1; }

@@ -10,7 +10,7 @@ OBJCOPY = ../../tool/gcc/$(EXE)/mips64-objcopy
 OBJDUMP = ../../tool/gcc/$(EXE)/mips64-objdump
 CC1_DIR = ../../tool/gcc/$(EXE)
 
-SRCS    = yaz0.c
+SRCS    = ddTool.c
 
 ADDRESS = 0x80000400
 __EZLJ_ERROR_IPL_BIN_ADDR = 
@@ -19,13 +19,10 @@ CFLAGS = -G 0 -Os -I../../include/libc -I../../include -fno-toplevel-reorder --s
 
 LDFLAGS = -T entry.ld --emit-relocs
 
-default: yaz0.bin
+default: ddTool.o
 
-yaz0.bin: yaz0.o 
-	@$(LD) -o yaz0.elf yaz0.o --just-symbols ../filesystem/filesystem.o $(LDFLAGS)
-
-yaz0.o: yaz0.c
-	@$(CC) -c yaz0.c -B$(CC1_DIR) $(CFLAGS)
+ddTool.o: ddTool.c
+	@$(CC) -c ddTool.c -B$(CC1_DIR) $(CFLAGS)
 
 clean:
 	rm -f *.bin *.elf *.o
