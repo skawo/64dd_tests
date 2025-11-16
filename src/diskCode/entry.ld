@@ -8,7 +8,7 @@ OUTPUT_FORMAT("elf32-bigmips", "elf32-bigmips", "elf32-littlemips")
 
 MEMORY {
     ROM (rw) : ORIGIN = 0, LENGTH = ROM_LENGTH
-    RDRAM (rw) : ORIGIN = RAM_ORIGIN, LENGTH = RAM_LENGTH
+    RAM (rw) : ORIGIN = RAM_ORIGIN, LENGTH = RAM_LENGTH
 }
 
 SECTIONS {
@@ -38,21 +38,21 @@ SECTIONS {
         *(.text*)
         *(.init)
         *(.fini)
-    } > RDRAM
+    } > RAM
     
     . = ALIGN(32);
     .rodata : ALIGN(4) 
     {
         *(.rodata*)
         *(.eh_frame*)
-    } > RDRAM
+    } > RAM
 
     . = ALIGN(32);
     .data : ALIGN(4) 
     {
         *(.data*)
         *(.sdata*)
-    } > RDRAM
+    } > RAM
 
     . = ALIGN(32);
     .bss : ALIGN(4) 
@@ -60,7 +60,7 @@ SECTIONS {
         *(COMMON)
         *(.bss*)
         *(.sbss*)
-    } > RDRAM
+    } > RAM
 
     . = ALIGN(32);
     __ramEnd = .;
