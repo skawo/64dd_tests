@@ -23,6 +23,10 @@ diskInfo diskInfoData =
     .unk_014 = {0}
 };
 
+// Since there isn't enough space in the boot sector to insert this, and
+// the boot code doesn't have access to the disk loading code
+// this has to live relatively close to the start of the disk so that
+// the IPL pre-loads it together with the boot code itself
 __attribute__((section(".errorIPL")))
 #include "../../include/fileHeaders/images/error_screens/EZLJ_ERROR_IPL_YAZ0.h"
 
@@ -53,7 +57,7 @@ ddHookTable hookTable =
     .unk_5C = { 0 },
     .loadCreditsMsg = NULL,
     .loadJapaneseMsg = NULL,
-    .loadEnglishMsg = Disk_GetNESMessage,
+    .loadEnglishMsg = Disk_GetENGMessage,
 #if OOT_PAL
     .loadEnglishMsg = NULL,
     .loadGermanMsg = NULL,
@@ -189,11 +193,11 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
 char* msg = "ARWING, GO!\x02";
 char* msg2 = "Huehuehuehue.\x02";
 
-s32 Disk_GetNESMessage(struct Font* font)
+s32 Disk_GetENGMessage(struct Font* font)
 {
     MessageContext* msgC = (MessageContext*)((u8*)font - offsetof(MessageContext, font));
 
-    //vars.funcTablePtr->loadFromDisk(font->msgBuf, 0x1060, 200);
+    //vars.funcTablePtr->loadFromDisk(font->msgBuf, font->msgOffset + (u32)STRINGDATA_BIN, font->msgLength);
 
     if (msgC->textId == 0x1002)
     {
@@ -204,8 +208,13 @@ s32 Disk_GetNESMessage(struct Font* font)
     {
         bcopy_Versioned(vars.gameVersion, msg2, font->msgBuf, 200);    
     }
-    
+
     return 1;
+}
+
+void Disk_SetMessageTables(struct MessageTableEntry** Japanese, struct MessageTableEntry** English, struct MessageTableEntry** Credits)
+{
+
 }
 
 #include "versionedCode.c"

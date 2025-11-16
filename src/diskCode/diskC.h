@@ -139,7 +139,8 @@ void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr);
 void Disk_PlayInit(struct PlayState* play);
 void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func);
 void Disk_GameState(struct GameState* state);
-s32 Disk_GetNESMessage(struct Font*);
+s32 Disk_GetENGMessage(struct Font*);
+void Disk_SetMessageTables(struct MessageTableEntry** Japanese, struct MessageTableEntry** English, struct MessageTableEntry** Credits);
 
 void Audio_PlaySfxGeneral_Versioned(u8 gameVer, u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd);
 void Actor_Spawn_Versioned(u8 gameVer, ActorContext* actorCtx, PlayState* play, s16 actorId, f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, s16 params);

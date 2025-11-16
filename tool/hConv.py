@@ -3,7 +3,7 @@ import re
 import argparse
 
 # Allowed extensions
-ALLOWED_EXTENSIONS = {".zmap", ".zscene", ".bin", ".yaz0"}
+ALLOWED_EXTENSIONS = {".zmap", ".zscene", ".bin", ".yaz0", ".tbl"}
 
 def sanitize_name(filename):
     """Convert filename to a valid C identifier in uppercase."""

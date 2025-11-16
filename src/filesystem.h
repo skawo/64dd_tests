@@ -6,5 +6,6 @@
 #include "../../include/fileHeaders/images/images.h"
 #include "../../include/fileHeaders/other/other.h"
 #include "../../include/fileHeaders/audio/audio.h"
+#include "../../include/fileHeaders/text/text.h"
 
 #endif // FILESYSTEM_H

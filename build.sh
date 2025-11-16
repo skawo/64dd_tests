@@ -2,6 +2,7 @@
 
 VERSION_PARAM="${1:-USA}"
 CONVERT_FILES="${2:-n}"
+CLEAN="${3:-ncl}"
 
 OS_TYPE=$(uname -s 2>/dev/null || echo Windows)
 
@@ -13,24 +14,31 @@ else
     PY3_CMD="py -3"
 fi
 
+if [ "$CLEAN" = "-clean" ]; then
+    MAKE_CMD="make clean && make"
+else
+    MAKE_CMD="make -j"
+fi
+
 if [ "$CONVERT_FILES" = "-c" ]; then
     $PY3_CMD tool/hConv.py scene include
     $PY3_CMD tool/hConv.py object include
     $PY3_CMD tool/hConv.py images include
     $PY3_CMD tool/hConv.py other include
     $PY3_CMD tool/hConv.py audio include
+    $PY3_CMD tool/hConv.py text include
 fi
 
 printf "Compiling...\n"
 
 cd src/yaz0Dec
-make clean && make || { echo "Build failed"; exit 1; }
+eval "$MAKE_CMD" ||  { echo "Build failed"; exit 1; }
 cd ../filesystem
-make clean && make || { echo "Build failed"; exit 1; }
+eval "$MAKE_CMD" || { echo "Build failed"; exit 1; }
 cd ../diskCode
-make clean && make || { echo "Build failed"; exit 1; }
+eval "$MAKE_CMD" ||  { echo "Build failed"; exit 1; }
 cd ../diskBoot
-make clean && make || { echo "Build failed"; exit 1; }
+eval "$MAKE_CMD" ||  { echo "Build failed"; exit 1; }
 
 cd ..
 cd ..
