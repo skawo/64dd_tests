@@ -41,5 +41,5 @@ SECTIONS {
     } > RDRAM
 
     . = ALIGN(32);
-    __ramEnd = .; 
+    __end = .; 
 }

@@ -15,4 +15,6 @@
 
 #include "../filesystem.h"
 
+extern void* __entry;
+
 #endif // DISKBOOT_H

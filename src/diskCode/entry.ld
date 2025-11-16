@@ -31,7 +31,7 @@ SECTIONS {
     . = ALIGN(32);
     __romEnd = .;
 
-    . = RAM_ORIGIN;
+    . = ORIGIN(RAM);
     .text : AT(__romEnd) ALIGN(4) 
     {
         __entry = .;

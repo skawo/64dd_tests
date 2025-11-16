@@ -13,7 +13,7 @@ void Disk_Boot()
     u32* frameBuffer = (u32*)0x80380000;
     ScreenSetup(frameBuffer);
 
-    u32* graphic = (u32*)(BLK_SIZE_ZONE0 + __EZLJ_ERROR_IPL_ADDR + 0x80000400);
+    u32* graphic = (u32*)(BLK_SIZE_ZONE0 + __EZLJ_ERROR_IPL_ADDR + (u32)&__entry);
     ddYaz0_Decompress((u8*)graphic, (u8*)frameBuffer, EZLJ_ERROR_IPL_YAZ0_LEN);
 
     while (true);    
