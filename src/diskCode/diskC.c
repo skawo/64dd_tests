@@ -84,7 +84,7 @@ void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
             u8* frameBuffer = (void*)K0_TO_K1(*viReg);
             u8* comprBuf = (u8*)0x80600000;
             vars.funcTablePtr->loadFromDisk(comprBuf, (u32)EZLJ_ERROR_VERSION_YAZ0, EZLJ_ERROR_VERSION_YAZ0_LEN);
-            ddYaz0_Decompress(comprBuf, frameBuffer);
+            ddYaz0_Decompress(comprBuf, frameBuffer, EZLJ_ERROR_VERSION_YAZ0_LEN);
             while (true);
         }
     }
@@ -197,12 +197,12 @@ s32 Disk_GetENGMessage(struct Font* font)
 
     if (msgC->textId == 0x1002)
     {
-        bcopy_Versioned(vars.gameVersion, msg, font->msgBuf, 200);
+        ddMemcpy(msg, font->msgBuf, 200);
         vars.spawnArwing = true;
     }
     else
     {
-        bcopy_Versioned(vars.gameVersion, msg2, font->msgBuf, 200);    
+        ddMemcpy(msg2, font->msgBuf, 200);    
     }
 
     return 1;

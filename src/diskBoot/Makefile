@@ -22,7 +22,7 @@ LDFLAGS = -T entry.ld --emit-relocs
 default: diskBoot.bin
 
 diskBoot.bin: diskBoot.o 
-	@$(LD) -o diskBoot.elf diskBoot.o ../yaz0Dec/yaz0.o --just-symbols ../filesystem/filesystem.o $(LDFLAGS)
+	@$(LD) -o diskBoot.elf diskBoot.o ../yaz0Dec/yaz0.o --just-symbols ../diskC/diskC.o $(LDFLAGS)
 	@$(OBJCOPY) -R .MIPS.abiflags -O binary diskBoot.elf diskBoot.bin
 
 diskBoot.o: diskBoot.c

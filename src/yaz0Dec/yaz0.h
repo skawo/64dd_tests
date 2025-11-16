@@ -1,6 +1,4 @@
-#ifndef DISKBOOT_H 
-#define DISKBOOT_H
+#ifndef YAZ0_H 
+#define YAZ0_H
 
-#include "../../include/yaz0.h"
-
-#endif // DISKBOOT_H
+#endif // YAZ0_H

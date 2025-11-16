@@ -8,7 +8,17 @@ typedef struct Yaz0Header
     u32 uncompDataOffset;
 } Yaz0Header;
 
-void ddYaz0_Decompress(u8* src, u8* dst)
+void ddMemcpy(u8* src, u8* dst, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        *dst = *src;
+        dst++;
+        src++;            
+    }    
+}
+
+void ddYaz0_Decompress(u8* src, u8* dst, int compr_size)
 {
     Yaz0Header* header = (Yaz0Header*)src;
     u32 bitIdx = 0;
@@ -18,6 +28,13 @@ void ddYaz0_Decompress(u8* src, u8* dst)
     u8* backPtr;
     u32 chunkSize;
     u32 off;
+
+    // File is not compressed...
+    if (*(u32*)src != 0x59617A30)
+    {
+        ddMemcpy(src, dst, compr_size);
+        return;
+    }
 
     src += sizeof(Yaz0Header);
 

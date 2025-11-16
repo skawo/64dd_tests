@@ -13,4 +13,6 @@
 #include "../../include/fault.h"
 #include "../../include/yaz0.h"
 
+#include "../filesystem.h"
+
 #endif // DISKBOOT_H
