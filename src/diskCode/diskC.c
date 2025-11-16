@@ -1,16 +1,7 @@
 #include "diskC.h"
 
-__attribute__((section(".variableRAM")))
-globals64DD vars =
-{
-    .funcTablePtr = (ddFuncPointers*)0xDEADBEEF,
-    .hookTablePtr = (ddHookTable*)0xDEADBEEF,
-    .spawnArwing = false,
-    .gameVersion = NTSC_1_0,
-    .defaultSfxPos = (Vec3f){0, 0, 0},
-    .defaultFreqAndVolScale = 1.0f,
-    .defaultReverb = 0,
-}; // This must be < 0x1060 bytes
+__attribute__((section(".diskHeader")))
+char Header[] = "ZELDA_DD";
 
 __attribute__((section(".diskInfo")))
 diskInfo diskInfoData =
@@ -22,13 +13,6 @@ diskInfo diskInfoData =
     .hookTablePtr = &hookTable,
     .unk_014 = {0}
 };
-
-// Since there isn't enough space in the boot sector to insert this, and
-// the boot code doesn't have access to the disk loading code
-// this has to live relatively close to the start of the disk so that
-// the IPL pre-loads it together with the boot code itself
-__attribute__((section(".errorIPL")))
-#include "../../include/fileHeaders/images/error_screens/EZLJ_ERROR_IPL_YAZ0.h"
 
 ddHookTable hookTable = 
 {
@@ -68,6 +52,18 @@ ddHookTable hookTable =
     .gameStateUpdate = Disk_GameState,
     .cutsceneSetScript = NULL,
 };
+
+globals64DD vars =
+{
+    .funcTablePtr = (ddFuncPointers*)0xDEADBEEF,
+    .hookTablePtr = (ddHookTable*)0xDEADBEEF,
+    .spawnArwing = false,
+    .gameVersion = NTSC_1_0,
+    .defaultSfxPos = (Vec3f){0, 0, 0},
+    .defaultFreqAndVolScale = 1.0f,
+    .defaultReverb = 0,
+}; // This must be < 0x1060 bytes
+
 
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
 {
