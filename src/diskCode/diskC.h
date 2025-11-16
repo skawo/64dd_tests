@@ -127,7 +127,7 @@ typedef struct globals64DD
     u32 test;
     ddFuncPointers* funcTablePtr;
     ddHookTable* hookTablePtr;
-    u8 gameVersion;
+    s8 gameVersion;
     bool spawnArwing;
     Vec3f defaultSfxPos;
     f32 defaultFreqAndVolScale;
@@ -154,5 +154,11 @@ extern void* __Disk_Start;
 extern void* __Disk_End;
 extern void* __Disk_VramStart;
 extern void* __Disk_VramEnd;
+extern void* __entry;
+extern void* RAM_LENGTH;
+
+#define SEGMENT_STATIC_START 0x80600000
+#define RAM_START (u32)&__entry
+#define RAM_LENGTH (u32)&RAM_LENGTH
 
 #endif // DISKC_H

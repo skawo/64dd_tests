@@ -1,92 +1,95 @@
 #include "diskC.h"
+#include "versionedCode.c"
 
 __attribute__((section(".diskHeader")))
 char Header[] = "ZELDA_DD";
 
 __attribute__((section(".diskInfo")))
-diskInfo diskInfoData =
+diskInfo diskInfoData = 
 {
-    .diskStart = &__Disk_Start,
-    .diskEnd =   &__Disk_End,         
-    .vramStart = &__Disk_VramStart,
-    .vramEnd =   &__Disk_VramEnd,  
+    .diskStart    = &__Disk_Start,
+    .diskEnd      = &__Disk_End,         
+    .vramStart    = &__Disk_VramStart,
+    .vramEnd      = &__Disk_VramEnd,  
     .hookTablePtr = &hookTable,
-    .unk_014 = {0}
+    .unk_014      = { 0 }
 };
 
 ddHookTable hookTable = 
 {
-    .diskInit = (DiskInitFunc)&__Disk_Init_K1,
-    .diskDestroy = NULL,
-    .loadRoom = NULL,
-    .sceneInit = NULL,
-    .playInit = NULL,
-    .playDestroy = NULL,
-    .mapDataInit = NULL,
-    .mapDataDestroy = NULL,
-    .mapDataSetDungeons = NULL,
-    .mapExpDestroy = NULL,
-    .mapExpTextureLoadDungeons = NULL,
-    .mapMarkInit = NULL,
-    .mapMarkDestroy = NULL,
-    .pauseMapMarkInit = NULL,
-    .pauseMapMarkDestroy = NULL,
-    .kaleidoInit = NULL,
-    .kaleidoDestroy = NULL,
-    .kaleidoLoadDungeonMap = NULL,
-    .getSceneEntry = NULL,
-    .unk_4C = { 0 },
-    .handleEntranceTriggers = NULL,
-    .setMessageTables = NULL,
-    .unk_5C = { 0 },
-    .loadCreditsMsg = NULL,
-    .loadJapaneseMsg = NULL,
-    .loadEnglishMsg = Disk_GetENGMessage,
+    .diskInit                   = (DiskInitFunc)&__Disk_Init_K1,
+    .diskDestroy                = NULL,
+    .loadRoom                   = NULL,
+    .sceneInit                  = NULL,
+    .playInit                   = NULL,
+    .playDestroy                = NULL,
+    .mapDataInit                = NULL,
+    .mapDataDestroy             = NULL,
+    .mapDataSetDungeons         = NULL,
+    .mapExpDestroy              = NULL,
+    .mapExpTextureLoadDungeons  = NULL,
+    .mapMarkInit                = NULL,
+    .mapMarkDestroy             = NULL,
+    .pauseMapMarkInit           = NULL,
+    .pauseMapMarkDestroy        = NULL,
+    .kaleidoInit                = NULL,
+    .kaleidoDestroy             = NULL,
+    .kaleidoLoadDungeonMap      = NULL,
+    .getSceneEntry              = NULL,
+    .unk_4C                     = { 0 },
+    .handleEntranceTriggers     = NULL,
+    .setMessageTables           = NULL,
+    .unk_5C                     = { 0 },
+    .loadCreditsMsg             = NULL,
+    .loadJapaneseMsg            = NULL,
+    .loadEnglishMsg             = Disk_GetENGMessage,
 #if OOT_PAL
-    .loadEnglishMsg = NULL,
-    .loadGermanMsg = NULL,
-    .loadFrenchMsg = NULL,
+    .loadEnglishMsg             = NULL,
+    .loadGermanMsg              = NULL,
+    .loadFrenchMsg              = NULL,
 #endif
-    .sceneDraw = Disk_SceneDraw,
-    .asyncDma = NULL,
-    .gameStateUpdate = Disk_GameState,
-    .cutsceneSetScript = NULL,
+    .sceneDraw                  = Disk_SceneDraw,
+    .asyncDma                   = NULL,
+    .gameStateUpdate            = Disk_GameState,
+    .cutsceneSetScript          = NULL,
 };
 
-globals64DD vars =
-{
-    .funcTablePtr = (ddFuncPointers*)0xDEADBEEF,
-    .hookTablePtr = (ddHookTable*)0xDEADBEEF,
-    .spawnArwing = false,
-    .gameVersion = NTSC_1_0,
-    .defaultSfxPos = (Vec3f){0, 0, 0},
-    .defaultFreqAndVolScale = 1.0f,
-    .defaultReverb = 0,
-}; // This must be < 0x1060 bytes
 
+globals64DD vars = 
+{
+    .funcTablePtr             = (ddFuncPointers*)0xDEADBEEF,
+    .hookTablePtr             = (ddHookTable*)0xDEADBEEF,
+    .spawnArwing              = false,
+    .gameVersion              = -1,
+    .defaultSfxPos            = (Vec3f){ 0, 0, 0 },
+    .defaultFreqAndVolScale   = 1.0f,
+    .defaultReverb            = 0,
+}; // This must be < 0x1060 bytes
 
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
 {
     funcTablePtr->osWritebackDCacheAll();
-    funcTablePtr->osInvalICache((void*)0x80400000, 0x400000);
+    funcTablePtr->osInvalICache((void*)RAM_START, RAM_LENGTH);
  
     vars.funcTablePtr = funcTablePtr;
     vars.hookTablePtr = hookTablePtr;    
 
-    switch ((u32)funcTablePtr)
+    // Check game version by comparing the address of the funcTablePtr.
+    for (int i = NTSC_1_0; i <= NTSC_1_2; i++)
     {
-        case 0x800FEE70: vars.gameVersion = NTSC_1_0; break;
-        case 0x800FF030: vars.gameVersion = NTSC_1_1; break;
-        case 0x800FF4B0: vars.gameVersion = NTSC_1_2; break;
-        default: 
-        {
-            u32* viReg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-            u8* frameBuffer = (void*)K0_TO_K1(*viReg);
-            u8* comprBuf = (u8*)0x80600000;
-            vars.funcTablePtr->loadFromDisk(comprBuf, (u32)EZLJ_ERROR_VERSION_YAZ0, EZLJ_ERROR_VERSION_YAZ0_LEN);
-            ddYaz0_Decompress(comprBuf, frameBuffer, EZLJ_ERROR_VERSION_YAZ0_LEN);
-            while (true);
-        }
+        if (funcTablePtr_Table[i - 1] == (void*)funcTablePtr)
+            vars.gameVersion = i;
+    }
+
+    // If no valid version detected, show error screen and hang.
+    if (vars.gameVersion < NTSC_1_0)
+    {
+        u32* viReg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
+        u8* frameBuffer = (void*)K0_TO_K1(*viReg);
+        u8* comprBuf = (u8*)SEGMENT_STATIC_START;
+        vars.funcTablePtr->loadFromDisk(comprBuf, (u32)EZLJ_ERROR_VERSION_YAZ0, EZLJ_ERROR_VERSION_YAZ0_LEN);
+        ddYaz0_Decompress(comprBuf, frameBuffer, EZLJ_ERROR_VERSION_YAZ0_LEN);
+        while (true);
     }
 }
 
@@ -212,5 +215,3 @@ void Disk_SetMessageTables(struct MessageTableEntry** Japanese, struct MessageTa
 {
 
 }
-
-#include "versionedCode.c"

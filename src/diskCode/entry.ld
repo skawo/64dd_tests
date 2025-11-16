@@ -1,3 +1,4 @@
+KSEG1 = 0xA0000000;
 RAM_ORIGIN  = 0x80400000; 
 ROM_LENGTH = 0x3F000000;    
 RAM_LENGTH  = 0x400000;      
@@ -67,9 +68,9 @@ SECTIONS {
 
 }
 
-__Disk_Init_K1 = (0xA0000000 | Disk_Init);
+__Disk_Init_K1   = (KSEG1 | Disk_Init);
 __Disk_Start     = __romEnd;
-__Disk_End       = __Disk_Start + __ramEnd - RAM_ORIGIN;
-__Disk_VramStart = (0xA0000000 | RAM_ORIGIN);
-__Disk_VramEnd   = (0xA0000000 | (RAM_ORIGIN + __Disk_End - __Disk_Start));
+__Disk_End       = __Disk_Start + __ramEnd - __entry;
+__Disk_VramStart = (KSEG1 | __entry);
+__Disk_VramEnd   = (KSEG1 | (__entry + __Disk_End - __Disk_Start));
 __ErrorIPL_Start = __romStart;
