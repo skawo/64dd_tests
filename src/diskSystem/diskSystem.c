@@ -92,6 +92,9 @@
 #endif
 
 #define FACTORY_LINE "HOMEBREW"
+#ifndef TIMESTAMP
+    #define TIMESTAMP "00000000"
+#endif
 #define COMPANY_CODE "01"
 #define RESERVED_STRING "NOTURA"
 
