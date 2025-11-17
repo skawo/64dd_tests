@@ -1,5 +1,5 @@
-#ifndef DISKBOOT_H 
-#define DISKBOOT_H
+#ifndef DISKSYSTEM_H 
+#define DISKSYSTEM_H
 
 #include "../../include/n64dd.h"
 #include "../../include/save.h"
@@ -15,6 +15,4 @@
 
 #include "../filesystem.h"
 
-extern void* __IPL_Entry;
-
-#endif // DISKBOOT_H
+#endif // DISKSYSTEM_H

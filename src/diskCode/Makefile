@@ -1,8 +1,7 @@
-# Detect OS
 ifeq ($(OS),Windows_NT)
-    EXE=win
+EXE=win
 else
-    EXE=linux
+EXE=linux
 endif
 
 CC      = ../../tool/gcc/$(EXE)/mips64-gcc

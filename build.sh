@@ -39,6 +39,8 @@ cd ../diskCode
 eval "$MAKE_CMD" ||  { echo "Build failed"; exit 1; }
 cd ../diskBoot
 eval "$MAKE_CMD" ||  { echo "Build failed"; exit 1; }
+cd ../diskSystem
+eval "$MAKE_CMD" ||  { echo "Build failed"; exit 1; }
 
 cd ..
 cd ..

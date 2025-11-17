@@ -42,4 +42,6 @@ SECTIONS {
 
     . = ALIGN(32);
     __end = .; 
+
+    __IPL_Entry = __entry;
 }

@@ -4,6 +4,8 @@ void ScreenSetup(void* frameBuffer);
 void ddMemcpy(u8* src, u8* dst, int n);
 void ddYaz0_Decompress(u8* src, u8* dst, int compr_size);
 
+extern void* __IPL_Entry;
+
 #ifndef __EZLJ_ERROR_IPL_ADDR
     #define __EZLJ_ERROR_IPL_ADDR 0
 #endif
@@ -13,7 +15,7 @@ void Disk_Boot()
     u32* frameBuffer = (u32*)0x80380000;
     ScreenSetup(frameBuffer);
 
-    u32* graphic = (u32*)(BLK_SIZE_ZONE0 + __EZLJ_ERROR_IPL_ADDR + (u32)&__entry);
+    u32* graphic = (u32*)(BLK_SIZE_ZONE0 + __EZLJ_ERROR_IPL_ADDR + (u32)&__IPL_Entry);
     ddYaz0_Decompress((u8*)graphic, (u8*)frameBuffer, EZLJ_ERROR_IPL_YAZ0_LEN);
 
     while (true);    
@@ -22,7 +24,7 @@ void Disk_Boot()
 void ScreenSetup(void* frameBuffer)
 {
     #define WRITE_REG(reg, data) *((u32*)K0_TO_K1(reg)) = (u32)data
-    
+
     WRITE_REG(VI_STATUS_REG, VI_CTRL_TYPE_16 | 
                              VI_CTRL_GAMMA_DITHER_ON | 
                              VI_CTRL_DIVOT_ON | 

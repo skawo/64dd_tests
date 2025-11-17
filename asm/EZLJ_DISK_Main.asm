@@ -67,12 +67,9 @@ if !{defined NOFILL} {
 //include "EZLJ_DISK_FileSystem.asm"
 //include "EZLJ_DISK_FileSystemPatch.asm"
 
-//LBA 24 - 64DD IPL Boot
-include "EZLJ_DISK_Boot.asm"
-
-//LBA 25 - Zelda Disk
-include "EZLJ_DISK_Hook.asm"
-
-include "EZLJ_DISK_System.asm"
-
-print "- Done!\n"
+seek(0)
+insert SYSTEM,"../src/diskSystem/diskSystem.bin"
+seekDisk0(0)
+insert BOOTCODE,"../src/diskBoot/diskBoot.bin"
+seekDisk(0)
+insert DISKCODE,"../src/diskCode/diskC.bin"
