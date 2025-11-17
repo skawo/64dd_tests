@@ -1,4 +1,4 @@
-#include "diskC.h"
+#include "diskCode.h"
 #include "versionedCode.c"
 
 __attribute__((section(".diskHeader")))

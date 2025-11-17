@@ -26,7 +26,7 @@ diskBoot.bin: diskBoot.o
 	@$(OBJCOPY) -R .MIPS.abiflags -O binary diskBoot.elf diskBoot.bin
 
 diskBoot.o: diskBoot.c
-	$(eval __EZLJ_ERROR_IPL_ADDR := $(shell $(OBJDUMP) -t ../diskCode/diskC.elf | grep '__ErrorIPL_Start' | awk '{print $$1}'))
+	$(eval __EZLJ_ERROR_IPL_ADDR := $(shell $(OBJDUMP) -t ../diskCode/diskCode.elf | grep '__ErrorIPL_Start' | awk '{print $$1}'))
 	@$(CC) -D__EZLJ_ERROR_IPL_ADDR=0x$(__EZLJ_ERROR_IPL_ADDR) -c diskBoot.c -B$(CC1_DIR) $(CFLAGS)
 
 clean:

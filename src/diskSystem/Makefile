@@ -51,12 +51,12 @@ JPN-DEV: DISKREGION = DISKREGION_JPN
 JPN-DEV: DISKRELEASE = DISKRELEASE_DEV
 JPN-DEV: common
 
-USA-64D: DISKFORMAT = DISKFORMAT_64D
-USA-64D: common
+USA-D64: DISKFORMAT = DISKFORMAT_D64
+USA-D64: common
 
-JPN-64D: DISKFORMAT = DISKFORMAT_64D
-JPN-64D: DISKREGION = DISKREGION_JPN
-JPN-64D: common
+JPN-D64: DISKFORMAT = DISKFORMAT_D64
+JPN-D64: DISKREGION = DISKREGION_JPN
+JPN-D64: common
 
 common: diskSystem.bin
 
@@ -70,4 +70,4 @@ diskSystem.o: diskSystem.c
 	       -D__IPL_ENTRY=0x$(__IPL_ENTRY_POINT) \
 	       -c diskSystem.c -B$(CC1_DIR) $(CFLAGS)
 clean:
-	rm -f *.elf *.o diskSystem.bin timestamp.h
+	rm -f *.elf *.o diskSystem.bin
