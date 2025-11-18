@@ -6,10 +6,10 @@ CLEAN="noclean"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        -fs|--fs)
+        -fs|--fs|fs)
             MAKE_FS="-fs"
             ;;
-        -clean|--clean|-c|--c)
+        -clean|--clean|-c|--c|c|clean)
             CLEAN="-c"
             ;;
         -*)
@@ -36,7 +36,7 @@ fi
 if [ "$CLEAN" = "-c" ]; then
     MAKE_CMD="make clean && make"
 else
-    MAKE_CMD="make -j"
+    MAKE_CMD="make"
 fi
 
 if [ "$MAKE_FS" = "-fs" ]; then
@@ -49,22 +49,8 @@ if [ "$MAKE_FS" = "-fs" ]; then
 fi
 
 printf "Compiling...\n"
-
 cd src/ddTool
-eval "$MAKE_CMD" || { echo "Build failed"; exit 1; }
-cd ../filesystem
-eval "$MAKE_CMD" || { echo "Build failed"; exit 1; }
-cd ../diskCode
-eval "$MAKE_CMD" || { echo "Build failed"; exit 1; }
-cd ../diskBoot
-eval "$MAKE_CMD" || { echo "Build failed"; exit 1; }
-cd ../diskSystem
-make clean
-make "$VERSION_PARAM" || { echo "Build failed"; exit 1; }
-
-cd ../..
+cd src
+eval "$MAKE_CMD" "$VERSION_PARAM" || { echo "Build failed"; exit 1; }
+cd ..
 printf "OK.\n\n"
-
-rm -f *.ndr *.disk *.ndd
-
-$PY3_CMD tool/makeDisk.py "$VERSION_PARAM"

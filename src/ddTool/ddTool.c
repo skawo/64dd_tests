@@ -1,4 +1,4 @@
-#include "../../include/yaz0.h"
+#include "ddTool.h"
 
 typedef struct Yaz0Header
 {

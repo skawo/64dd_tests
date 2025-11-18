@@ -1,7 +1,7 @@
 #include "diskCode.h"
 #include "versionedCode.c"
 
-__attribute__((section(".diskHeader")))
+__attribute__((section(".codeHeader")))
 char Header[] = "ZELDA_DD";
 
 __attribute__((section(".diskInfo")))

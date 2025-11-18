@@ -15,7 +15,7 @@ MEMORY {
 SECTIONS {
     .diskHeader : ALIGN(1) 
     {
-        KEEP(*(.diskHeader))
+        KEEP(*(.codeHeader))
     } > ROM   
 
     .diskInfo PADDING : ALIGN(1) 

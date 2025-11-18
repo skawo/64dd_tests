@@ -26,10 +26,6 @@
 #define LEO_DISK_TYPE_5 5
 #define LEO_DISK_TYPE_6 6
 
-#ifndef __IPL_ENTRY
-    #define __IPL_ENTRY 0
-#endif
-
 #define DISK_TYPE LEO_DISK_TYPE_6
 #define IPL_LBA_LOAD_AMOUNT 0x000A
 
@@ -98,6 +94,8 @@
 #define COMPANY_CODE "01"
 #define RESERVED_STRING "NOTURA"
 
+extern void* __IPL_Entry;
+
 #define DISK_DATA_INIT                      \
 {                                           \
     .region = DISK_REGION,                  \
@@ -106,7 +104,7 @@
     .loadAmount = IPL_LBA_LOAD_AMOUNT,      \
     .defectTrackDataOffsets = {0},          \
     ._padding_FFFFFFFF = 0xFFFFFFFF,        \
-    .loadVramAddress = (void*)__IPL_ENTRY,  \
+    .loadVramAddress = (void*)&__IPL_Entry, \
     .defectTrackData = {0},                 \
     DISK_DATA_LBA_FIELDS                    \
 }

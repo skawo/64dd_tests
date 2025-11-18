@@ -11,6 +11,7 @@
 #include "../../include/controller.h"
 #include "../../include/sfx.h"
 #include "../../include/fault.h"
+#include "../ddTool/ddTool.h"
 
 #include "../filesystem.h"
 
@@ -145,9 +146,6 @@ void Disk_SetMessageTables(struct MessageTableEntry** Japanese, struct MessageTa
 void Audio_PlaySfxGeneral_Versioned(u8 gameVer, u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd);
 void Actor_Spawn_Versioned(u8 gameVer, ActorContext* actorCtx, PlayState* play, s16 actorId, f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, s16 params);
 void bcopy_Versioned(u8 gameVer, const void* __src, void* __dest, int __n);
-
-void ddMemcpy(u8* src, u8* dst, int n);
-void ddYaz0_Decompress(u8* src, u8* dst, int compr_size);
 
 extern void* __Disk_Init_K1;
 extern void* __Disk_Start;

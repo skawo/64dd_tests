@@ -11,7 +11,7 @@
 #include "../../include/controller.h"
 #include "../../include/sfx.h"
 #include "../../include/fault.h"
-#include "../../include/yaz0.h"
+#include "../ddTool/ddTool.h"
 
 #include "../filesystem.h"
 
