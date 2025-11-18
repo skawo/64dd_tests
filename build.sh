@@ -49,7 +49,6 @@ if [ "$MAKE_FS" = "-fs" ]; then
 fi
 
 printf "Compiling...\n"
-cd src/ddTool
 cd src
 eval "$MAKE_CMD" "$VERSION_PARAM" || { echo "Build failed"; exit 1; }
 cd ..
