@@ -13,7 +13,7 @@ MEMORY {
 }
 
 SECTIONS {
-    .diskHeader : ALIGN(1) 
+    .codeHeader : ALIGN(1) 
     {
         KEEP(*(.codeHeader))
     } > ROM   
