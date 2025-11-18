@@ -60,12 +60,14 @@ JPN-D64: d64
 
 common: clean-diskSystem ddTool/ddTool.o filesystem/filesystem.o ddTool/ddToolCode.o diskCode/diskCode.o diskBoot/diskBoot.o diskSystem/diskSystem.o
 	@rm -f ../*.disk
+	@echo "Creating $(OUTFILENAME)..."
 	@$(LD) -o disk.elf ddTool/ddTool.o filesystem/filesystem.o ddTool/ddToolCode.o diskCode/diskCode.o diskBoot/diskBoot.o diskSystem/diskSystem.o --defsym=BOOT_OFFS_VALUE=0x738C0 $(LDFLAGS)
 	@$(OBJCOPY) -R .MIPS.abiflags -O binary disk.elf ../$(OUTFILENAME)
 	@dd if=/dev/zero bs=1 count=0 seek=$$((0x3DEC800)) of=../$(OUTFILENAME) 2>/dev/null
 
 d64: clean-diskSystem ddTool/ddTool.o filesystem/filesystem.o ddTool/ddToolCode.o diskCode/diskCode.o diskBoot/diskBoot.o diskSystem/diskSystem.o
 	@rm -f ../*.disk
+	@echo "Creating $(OUTFILENAME)..."
 	@$(LD) -o disk.elf ddTool/ddTool.o filesystem/filesystem.o ddTool/ddToolCode.o diskCode/diskCode.o diskBoot/diskBoot.o diskSystem/diskSystem.o --defsym=BOOT_OFFS_VALUE=0x200 $(LDFLAGS)
 	@$(OBJCOPY) -R .MIPS.abiflags -O binary disk.elf ../$(OUTFILENAME)
 
