@@ -4,6 +4,8 @@
 __attribute__((section(".codeHeader")))
 char Header[] = "ZELDA_DD";
 
+/* There is padding here in the file */
+
 __attribute__((section(".diskInfo")))
 diskInfo diskInfoData = 
 {
@@ -64,7 +66,7 @@ globals64DD vars =
     .defaultSfxPos            = (Vec3f){ 0, 0, 0 },
     .defaultFreqAndVolScale   = 1.0f,
     .defaultReverb            = 0,
-}; // This must be < 0x1060 bytes
+};
 
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
 {

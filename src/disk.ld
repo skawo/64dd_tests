@@ -7,7 +7,6 @@ RAM_LENGTH  = 0x400000;
 PADDING = 0x1060;
 
 BOOT_OFFS = BOOT_OFFS_VALUE;
-CODE_OFFS = BOOT_OFFS + LBA_LENGTH;
 
 OUTPUT_ARCH(mips)
 OUTPUT_FORMAT("elf32-bigmips", "elf32-bigmips", "elf32-littlemips")
@@ -28,7 +27,9 @@ SECTIONS {
         KEEP(*(.diskHeader))
     } > HEADER   
 
-    .boot : AT(BOOT_OFFS) ALIGN(1) 
+    OFFSET = BOOT_OFFS;
+
+    .boot : AT(OFFSET) ALIGN(1) 
     {
         . = ORIGIN(BOOT);
         __IPL_Entry = .;
@@ -36,12 +37,13 @@ SECTIONS {
         KEEP(*ddTool.o(.text* .rodata* .data* .sdata* .bss* .sbss*))
     } > BOOT
 
-    .codeHeader 0 : AT(CODE_OFFS) ALIGN(1) 
+    OFFSET += LBA_LENGTH;
+
+    .codeHeader 0 : AT(OFFSET) ALIGN(1) 
     {
         KEEP(*(.codeHeader))
     } > ROM   
 
-    OFFSET += CODE_OFFS;
     OFFSET += PADDING;
 
     .diskInfo PADDING : AT(OFFSET) ALIGN(1) 
