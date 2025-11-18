@@ -7,3 +7,5 @@ _pj64d.lnk
 *.disk
 tool/gcc/linux
 tool/gcc/win
+*.elf
+*.o
