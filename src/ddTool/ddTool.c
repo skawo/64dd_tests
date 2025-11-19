@@ -18,6 +18,28 @@ void ddMemcpy(u8* src, u8* dst, int n)
     }    
 }
 
+int ddMemcmp(void* s1, void* s2, int n)
+{
+    u8* p1 = (u8*)s1;
+    u8* p2 = (u8*)s2;
+
+    for (int i = 0; i < n; i++) 
+    {
+        if (p1[i] != p2[i])
+            return (p1[i] < p2[i]) ? -1 : 1;
+    }
+
+    return 0;
+}
+
+void ddMemfill(void* dst, u8 byte, int n)
+{
+    u8* p = (u8*)dst;
+    
+    for (int i = 0; i < n; i++)
+        p[i] = byte;
+}
+
 void ddYaz0_Decompress(u8* src, u8* dst, int compr_size)
 {
     Yaz0Header* header = (Yaz0Header*)src;

@@ -20,11 +20,11 @@ diskInfo diskInfoData =
 ddHookTable hookTable = 
 {
     .diskInit                   = (DiskInitFunc)&__Disk_Init_K1,
-    .diskDestroy                = NULL,
+    .diskDestroy                = Disk_Destroy,
     .loadRoom                   = NULL,
     .sceneInit                  = NULL,
-    .playInit                   = NULL,
-    .playDestroy                = NULL,
+    .playInit                   = Disk_PlayInit,
+    .playDestroy                = Disk_PlayDestroy,
     .mapDataInit                = NULL,
     .mapDataDestroy             = NULL,
     .mapDataSetDungeons         = NULL,
@@ -59,8 +59,9 @@ ddHookTable hookTable =
 
 globals64DD vars = 
 {
-    .funcTablePtr             = (ddFuncPointers*)0xDEADBEEF,
-    .hookTablePtr             = (ddHookTable*)0xDEADBEEF,
+    .play                     = (PlayState*)NULL,
+    .funcTablePtr             = (ddFuncPointers*)NULL,
+    .hookTablePtr             = (ddHookTable*)NULL,
     .spawnArwing              = false,
     .gameVersion              = -1,
     .defaultSfxPos            = (Vec3f){ 0, 0, 0 },
@@ -85,14 +86,96 @@ void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
 
     // If no valid version detected, show error screen and hang.
     if (vars.gameVersion < NTSC_1_0)
+        ShowErrorScreen(ERROR_VERSION_YAZ0, ERROR_VERSION_YAZ0_LEN);
+
+    SaveContext* sContext = vars.funcTablePtr->saveContext;
+
+    sContext->language = LANGUAGE_ENG;
+    sContext->gameMode = GAMEMODE_NORMAL;
+
+    if (*(u32*)sContext->unk_1358 == 0)                     // If new save...
     {
-        u32* viReg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-        u8* frameBuffer = (void*)K0_TO_K1(*viReg);
-        u8* comprBuf = (u8*)SEGMENT_STATIC_START;
-        vars.funcTablePtr->loadFromDisk(comprBuf, (u32)EZLJ_ERROR_VERSION_YAZ0, EZLJ_ERROR_VERSION_YAZ0_LEN);
-        ddYaz0_Decompress(comprBuf, frameBuffer, EZLJ_ERROR_VERSION_YAZ0_LEN);
-        while (true);
+        //vars.funcTablePtr->loadFromDisk(&sContext->save.info.playerData.healthCapacity, (u32)DEFAULT_SAVE_DATA_BIN, DEFAULT_SAVE_DATA_BIN_LEN);
+        ddMemcpy(sContext->unk_1358, SAVE_ID, 4);
     }
+    else if (ddMemcmp(sContext->unk_1358, SAVE_ID, 4))      // Save from another disk.
+        ShowErrorScreen(ERROR_SAVE_YAZ0, ERROR_SAVE_YAZ0_LEN);
+}
+
+void Disk_Destroy()
+{
+    ShowErrorScreen(PLEASERESET_YAZ0, PLEASERESET_YAZ0_LEN);
+}
+
+void Disk_GameState(struct GameState* state)
+{
+    SaveContext* sContext = vars.funcTablePtr->saveContext;
+
+    // We have no idea of the state the disk has left the game code, and so it's best to ask the player to reset.
+    if (vars.play && vars.play->pauseCtx.promptChoice && vars.play->pauseCtx.state == PAUSE_STATE_GAME_OVER_FINISH)
+        Disk_Destroy();   
+}
+
+void Disk_PlayInit(struct PlayState* play)
+{
+    vars.play = play;
+}
+
+void Disk_PlayDestroy(struct PlayState* play)
+{
+    vars.play = NULL;
+}
+
+void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
+{
+    #define __gfxCtx (play->state.gfxCtx)
+    
+    Input* input = play->state.input;
+    func[play->sceneDrawConfig](play);  
+
+    //vars.funcTablePtr->faultDrawText(25, 25, "Num actors: %d", play->actorCtx.total);
+    Draw64DDDVDLogo(play);
+}
+
+char* msg = "ARWING, GO!\x02";
+char* msg2 = "Huehuehuehue.\x02";
+
+s32 Disk_GetENGMessage(struct Font* font)
+{
+    MessageContext* msgC = (MessageContext*)((u8*)font - offsetof(MessageContext, font));
+
+    //vars.funcTablePtr->loadFromDisk(font->msgBuf, font->msgOffset + (u32)STRINGDATA_BIN, font->msgLength);
+
+    if (msgC->textId == 0x1002)
+    {
+        ddMemcpy(msg, font->msgBuf, 200);
+        
+        if (vars.play)
+            SpawnArwing(vars.play);
+    }
+    else
+    {
+        ddMemcpy(msg2, font->msgBuf, 200);    
+    }
+
+    return 1;
+}
+
+void Disk_SetMessageTables(struct MessageTableEntry** Japanese, struct MessageTableEntry** English, struct MessageTableEntry** Credits)
+{
+
+}
+
+// ===========================================================================================================
+
+void ShowErrorScreen(void* graphic, u32 graphicLen)
+{
+    u32* viReg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
+    u8* frameBuffer = (void*)K0_TO_K1(*viReg);
+    u8* comprBuf = (u8*)SEGMENT_STATIC_START;
+    vars.funcTablePtr->loadFromDisk(comprBuf, (u32)graphic, graphicLen);
+    ddYaz0_Decompress(comprBuf, frameBuffer, graphicLen);
+    while (true);
 }
 
 void DrawRect(Gfx** gfxp, u8 r, u8 g, u8 b, u32 PosX, u32 PosY, u32 Sizex, u32 SizeY)
@@ -108,34 +191,9 @@ void DrawRect(Gfx** gfxp, u8 r, u8 g, u8 b, u32 PosX, u32 PosY, u32 Sizex, u32 S
     *gfxp = gfx;
 }
 
-void Disk_GameState(struct GameState* state)
-{
-    //Input* input = state->input;
-    //vars.funcTablePtr->saveContext->save.dayTime += 0x120;
-}
-
-void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
+void Draw64DDDVDLogo(struct PlayState* play)
 {
     #define __gfxCtx (play->state.gfxCtx)
-
-    Input* input = play->state.input;
-    func[play->sceneDrawConfig](play);  
-
-    //u32* vi_reg = (u32*)K0_TO_K1(VI_ORIGIN_REG);
-    vars.funcTablePtr->faultDrawText(25, 25, "Oh hello we can print to screen! %x", (u32)EZLJ_ERROR_VERSION_YAZ0);
-
-    if (vars.spawnArwing || CHECK_BTN_ALL(input[0].press.button, BTN_L))
-    {
-        vars.spawnArwing = false;
-        Audio_PlaySfxGeneral_Versioned(vars.gameVersion, NA_SE_SY_KINSTA_MARK_APPEAR, &vars.defaultSfxPos, 4, 
-                                       &vars.defaultFreqAndVolScale, &vars.defaultFreqAndVolScale, &vars.defaultReverb);
-        
-        Player* player = GET_PLAYER(play);
-
-        Actor_Spawn_Versioned(vars.gameVersion, &play->actorCtx, play, ACTOR_EN_CLEAR_TAG, player->actor.world.pos.x,
-                              player->actor.world.pos.y + 50.0f, player->actor.world.pos.z, 0, 0, 0, 0);   
-    }
-    
     Gfx* gfxRef = OVERLAY_DISP;
 
     // Logo animation state
@@ -163,57 +221,40 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
 
     // 6
     DrawRect(&gfxRef, 0, 255, 0, currentX, posY + BLOCK_SIZE, BLOCK_SIZE, 4*BLOCK_SIZE);                    // Left vertical
-    DrawRect(&gfxRef, 0, 255, 0, currentX + BLOCK_SIZE, posY, 3*BLOCK_SIZE, BLOCK_SIZE);       // Top horizontal
-    DrawRect(&gfxRef, 0, 255, 0, currentX + BLOCK_SIZE, posY + 2*BLOCK_SIZE, 3*BLOCK_SIZE, BLOCK_SIZE);  // Middle horizontal
-    DrawRect(&gfxRef, 0, 255, 0, currentX + BLOCK_SIZE, posY + 4*BLOCK_SIZE, 3*BLOCK_SIZE, BLOCK_SIZE);  // Bottom horizontal
-    DrawRect(&gfxRef, 0, 255, 0, currentX + 4*BLOCK_SIZE, posY + 3*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);  // Right connector
+    DrawRect(&gfxRef, 0, 255, 0, currentX + BLOCK_SIZE, posY, 3*BLOCK_SIZE, BLOCK_SIZE);                    // Top horizontal
+    DrawRect(&gfxRef, 0, 255, 0, currentX + BLOCK_SIZE, posY + 2*BLOCK_SIZE, 3*BLOCK_SIZE, BLOCK_SIZE);     // Middle horizontal
+    DrawRect(&gfxRef, 0, 255, 0, currentX + BLOCK_SIZE, posY + 4*BLOCK_SIZE, 3*BLOCK_SIZE, BLOCK_SIZE);     // Bottom horizontal
+    DrawRect(&gfxRef, 0, 255, 0, currentX + 4*BLOCK_SIZE, posY + 3*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);     // Right connector
 
     // 4
     currentX += 5 * BLOCK_SIZE;
-    DrawRect(&gfxRef, 255, 255, 0, currentX, posY, BLOCK_SIZE, 3*BLOCK_SIZE);                  // Left vertical (top 3)
-    DrawRect(&gfxRef, 255, 255, 0, currentX + 3*BLOCK_SIZE, posY, BLOCK_SIZE, 5*BLOCK_SIZE);   // Right vertical (full)
-    DrawRect(&gfxRef, 255, 255, 0, currentX + BLOCK_SIZE, posY + 2*BLOCK_SIZE, 2*BLOCK_SIZE, BLOCK_SIZE);  // Middle horizontal
+    DrawRect(&gfxRef, 255, 255, 0, currentX, posY, BLOCK_SIZE, 3*BLOCK_SIZE);                               // Left vertical (top 3)
+    DrawRect(&gfxRef, 255, 255, 0, currentX + 3*BLOCK_SIZE, posY, BLOCK_SIZE, 5*BLOCK_SIZE);                // Right vertical (full)
+    DrawRect(&gfxRef, 255, 255, 0, currentX + BLOCK_SIZE, posY + 2*BLOCK_SIZE, 2*BLOCK_SIZE, BLOCK_SIZE);   // Middle horizontal
 
     // D
     currentX += 5 * BLOCK_SIZE;
-    DrawRect(&gfxRef, 0, 255, 255, currentX, posY, BLOCK_SIZE, 5*BLOCK_SIZE);                  // Left vertical
-    DrawRect(&gfxRef, 0, 255, 255, currentX + BLOCK_SIZE, posY, 3*BLOCK_SIZE, BLOCK_SIZE);     // Top horizontal
-    DrawRect(&gfxRef, 0, 255, 255, currentX + BLOCK_SIZE, posY + 4*BLOCK_SIZE, 3*BLOCK_SIZE, BLOCK_SIZE);  // Bottom horizontal
-    DrawRect(&gfxRef, 0, 255, 255, currentX + 4*BLOCK_SIZE, posY + BLOCK_SIZE, BLOCK_SIZE, 3*BLOCK_SIZE);  // Right vertical
+    DrawRect(&gfxRef, 0, 255, 255, currentX, posY, BLOCK_SIZE, 5*BLOCK_SIZE);                               // Left vertical
+    DrawRect(&gfxRef, 0, 255, 255, currentX + BLOCK_SIZE, posY, 3*BLOCK_SIZE, BLOCK_SIZE);                  // Top horizontal
+    DrawRect(&gfxRef, 0, 255, 255, currentX + BLOCK_SIZE, posY + 4*BLOCK_SIZE, 3*BLOCK_SIZE, BLOCK_SIZE);   // Bottom horizontal
+    DrawRect(&gfxRef, 0, 255, 255, currentX + 4*BLOCK_SIZE, posY + BLOCK_SIZE, BLOCK_SIZE, 3*BLOCK_SIZE);   // Right vertical
 
     // D
     currentX += 5 * BLOCK_SIZE;
-    DrawRect(&gfxRef, 255, 0, 255, currentX, posY, BLOCK_SIZE, 5*BLOCK_SIZE);                  // Left vertical
-    DrawRect(&gfxRef, 255, 0, 255, currentX + BLOCK_SIZE, posY, 3*BLOCK_SIZE, BLOCK_SIZE);     // Top horizontal
+    DrawRect(&gfxRef, 255, 0, 255, currentX, posY, BLOCK_SIZE, 5*BLOCK_SIZE);                               // Left vertical
+    DrawRect(&gfxRef, 255, 0, 255, currentX + BLOCK_SIZE, posY, 3*BLOCK_SIZE, BLOCK_SIZE);                  // Top horizontal
     DrawRect(&gfxRef, 255, 0, 255, currentX + BLOCK_SIZE, posY + 4*BLOCK_SIZE, 3*BLOCK_SIZE, BLOCK_SIZE);  // Bottom horizontal
     DrawRect(&gfxRef, 255, 0, 255, currentX + 4*BLOCK_SIZE, posY + BLOCK_SIZE, BLOCK_SIZE, 3*BLOCK_SIZE);  // Right vertical
 
     OVERLAY_DISP = gfxRef;
 }
 
-char* msg = "ARWING, GO!\x02";
-char* msg2 = "Huehuehuehue.\x02";
-
-s32 Disk_GetENGMessage(struct Font* font)
+void SpawnArwing(struct PlayState* play)
 {
-    MessageContext* msgC = (MessageContext*)((u8*)font - offsetof(MessageContext, font));
-
-    //vars.funcTablePtr->loadFromDisk(font->msgBuf, font->msgOffset + (u32)STRINGDATA_BIN, font->msgLength);
-
-    if (msgC->textId == 0x1002)
-    {
-        ddMemcpy(msg, font->msgBuf, 200);
-        vars.spawnArwing = true;
-    }
-    else
-    {
-        ddMemcpy(msg2, font->msgBuf, 200);    
-    }
-
-    return 1;
-}
-
-void Disk_SetMessageTables(struct MessageTableEntry** Japanese, struct MessageTableEntry** English, struct MessageTableEntry** Credits)
-{
-
+    Audio_PlaySfxGeneral_Versioned(vars.gameVersion, NA_SE_SY_KINSTA_MARK_APPEAR, &vars.defaultSfxPos, 4, 
+                                    &vars.defaultFreqAndVolScale, &vars.defaultFreqAndVolScale, &vars.defaultReverb);
+    
+    Player* player = GET_PLAYER(play);
+    Actor_Spawn_Versioned(vars.gameVersion, &play->actorCtx, play, ACTOR_EN_CLEAR_TAG, player->actor.world.pos.x,
+                            player->actor.world.pos.y + 50.0f, player->actor.world.pos.z, 0, 0, 0, 0); 
 }

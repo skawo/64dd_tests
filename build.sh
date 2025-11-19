@@ -40,12 +40,7 @@ else
 fi
 
 if [ "$MAKE_FS" = "-fs" ]; then
-    $PY3_CMD tool/hConv.py scene include
-    $PY3_CMD tool/hConv.py object include
-    $PY3_CMD tool/hConv.py images include
-    $PY3_CMD tool/hConv.py other include
-    $PY3_CMD tool/hConv.py audio include
-    $PY3_CMD tool/hConv.py text include
+    $PY3_CMD tool/hConv.py filesystem include
 fi
 
 printf "Compiling...\n"

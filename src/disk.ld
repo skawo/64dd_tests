@@ -58,6 +58,7 @@ SECTIONS {
     {
         __romStart = .;
         *filesystem.o(.text* .rodata* .data* .sdata* .bss* .sbss*)
+        KEEP(*(.patches))
         . = ALIGN(32);
     } > ROM
     __romEnd = .;

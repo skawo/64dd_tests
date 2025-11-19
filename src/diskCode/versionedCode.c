@@ -5,12 +5,12 @@
 
 #define VERSIONED_CALL(table, version, FuncType, ...) \
     ((FuncType)table[version - 1])(__VA_ARGS__)
-
-                                        /*  NTSC_1_0   */  /*   NTSC_1_1   */                     /*   NTSC_1_2   */
-VERSIONED_TABLE(PlaySfx_Table,          (void*)0x800C806C, (void*)0x800C823C, (void*)0xFFFFFFFF, (void*)0x800C88BC);
-VERSIONED_TABLE(ActorSpawn_Table,       (void*)0x80025110, (void*)0x80025110, (void*)0xFFFFFFFF, (void*)0x80025750);
-VERSIONED_TABLE(bcopy_Table,            (void*)0x80004DC0, (void*)0x80004DC0, (void*)0xFFFFFFFF, (void*)0x80004FD0);
-VERSIONED_TABLE(funcTablePtr_Table,     (void*)0x800FEE70, (void*)0x800FF030, (void*)0xFFFFFFFF, (void*)0x800FF4B0);
+                                                /*  NTSC_1_0   */              /*   NTSC_1_1   */                                    /*   NTSC_1_2   */
+VERSIONED_TABLE(PlaySfx_Table,                  (void*)0x800C806C,             (void*)0x800C823C,           (void*)0xFFFFFFFF,      (void*)0x800C88BC);
+VERSIONED_TABLE(ActorSpawn_Table,               (void*)0x80025110,             (void*)0x80025110,           (void*)0xFFFFFFFF,      (void*)0x80025750);
+VERSIONED_TABLE(bcopy_Table,                    (void*)0x80004DC0,             (void*)0x80004DC0,           (void*)0xFFFFFFFF,      (void*)0x80004FD0);
+VERSIONED_TABLE(funcTablePtr_Table,             (void*)0x800FEE70,             (void*)0x800FF030,           (void*)0xFFFFFFFF,      (void*)0x800FF4B0);
+VERSIONED_TABLE(mainCode_Table,                 (void*)0x800110A0,             (void*)0x800110A0,           (void*)0xFFFFFFFF,      (void*)0x800116E0);
 
 void Audio_PlaySfxGeneral_Versioned(u8 gameVer, u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd)
 {

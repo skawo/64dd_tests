@@ -125,7 +125,7 @@ typedef struct ddHookTable
 
 typedef struct globals64DD
 {
-    u32 test;
+    PlayState* play;
     ddFuncPointers* funcTablePtr;
     ddHookTable* hookTablePtr;
     s8 gameVersion;
@@ -137,11 +137,20 @@ typedef struct globals64DD
 } globals64DD;
 
 void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr);
+void Disk_Destroy();
 void Disk_PlayInit(struct PlayState* play);
+void Disk_PlayDestroy(struct PlayState* play);
+void Disk_SceneInit(struct PlayState* play);
 void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func);
 void Disk_GameState(struct GameState* state);
+void Disk_KaleidoDestroy();
 s32 Disk_GetENGMessage(struct Font*);
 void Disk_SetMessageTables(struct MessageTableEntry** Japanese, struct MessageTableEntry** English, struct MessageTableEntry** Credits);
+
+void DrawRect(Gfx** gfxp, u8 r, u8 g, u8 b, u32 PosX, u32 PosY, u32 Sizex, u32 SizeY);
+void ShowErrorScreen(void* graphic, u32 graphicLen);
+void Draw64DDDVDLogo(struct PlayState* play);
+void SpawnArwing(struct PlayState* play);
 
 void Audio_PlaySfxGeneral_Versioned(u8 gameVer, u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd);
 void Actor_Spawn_Versioned(u8 gameVer, ActorContext* actorCtx, PlayState* play, s16 actorId, f32 posX, f32 posY, f32 posZ, s16 rotX, s16 rotY, s16 rotZ, s16 params);
@@ -158,5 +167,7 @@ extern void* RAM_LENGTH;
 #define SEGMENT_STATIC_START 0x80600000
 #define RAM_START (u32)&__entry
 #define RAM_LENGTH (u32)&RAM_LENGTH
+
+#define SAVE_ID "64DD"
 
 #endif // DISKC_H

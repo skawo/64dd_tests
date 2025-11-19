@@ -1,4 +1,0 @@
-//icon_item_24_static
-
-//Patch out boss icon
-n64dd_PatchFill((DDHOOK_ICON_ITEM_24_STATIC + 0x6300), 0x900, 0)
