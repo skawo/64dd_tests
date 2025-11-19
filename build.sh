@@ -1,13 +1,13 @@
 #!/bin/sh
 
 VERSION_PARAM="USA"
-MAKE_FS="nofs"
+MAKE_FS="-fs"
 CLEAN="noclean"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        -fs|--fs|fs)
-            MAKE_FS="-fs"
+        -nfs|--nfs|nfs|nofs|-nofs|--nofs)
+            MAKE_FS="nofs"
             ;;
         -clean|--clean|-c|--c|c|clean)
             CLEAN="-c"

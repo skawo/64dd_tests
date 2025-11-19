@@ -93,9 +93,8 @@ void Disk_Init(ddFuncPointers* funcTablePtr, ddHookTable* hookTablePtr)
     sContext->language = LANGUAGE_ENG;
     sContext->gameMode = GAMEMODE_NORMAL;
 
-    if (*(u32*)sContext->unk_1358 == 0)                     // If new save...
+    if (*(u32*)sContext->unk_1358 == 0)                     // If new save (check using an unused field in the save)
     {
-        //vars.funcTablePtr->loadFromDisk(&sContext->save.info.playerData.healthCapacity, (u32)DEFAULT_SAVE_DATA_BIN, DEFAULT_SAVE_DATA_BIN_LEN);
         ddMemcpy(sContext->unk_1358, SAVE_ID, 4);
     }
     else if (ddMemcmp(sContext->unk_1358, SAVE_ID, 4))      // Save from another disk.
@@ -137,26 +136,20 @@ void Disk_SceneDraw(struct PlayState* play, SceneDrawConfigFunc* func)
     Draw64DDDVDLogo(play);
 }
 
-char* msg = "ARWING, GO!\x02";
-char* msg2 = "Huehuehuehue.\x02";
-
 s32 Disk_GetENGMessage(struct Font* font)
 {
     MessageContext* msgC = (MessageContext*)((u8*)font - offsetof(MessageContext, font));
 
-    //vars.funcTablePtr->loadFromDisk(font->msgBuf, font->msgOffset + (u32)STRINGDATA_BIN, font->msgLength);
-
+    // Talking to Saria for the first time.
     if (msgC->textId == 0x1002)
     {
-        ddMemcpy(msg, font->msgBuf, 200);
+        ddMemcpy("ARWING, GO!\x02", font->msgBuf, 200);
         
         if (vars.play)
             SpawnArwing(vars.play);
     }
     else
-    {
-        ddMemcpy(msg2, font->msgBuf, 200);    
-    }
+        vars.funcTablePtr->dmaMgrRequestSync(font->msgBuf, (uintptr_t)(font->msgOffset + (u32)engMsg_Table[vars.gameVersion]), font->msgLength);  
 
     return 1;
 }

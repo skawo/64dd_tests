@@ -11,6 +11,7 @@ VERSIONED_TABLE(ActorSpawn_Table,               (void*)0x80025110,             (
 VERSIONED_TABLE(bcopy_Table,                    (void*)0x80004DC0,             (void*)0x80004DC0,           (void*)0xFFFFFFFF,      (void*)0x80004FD0);
 VERSIONED_TABLE(funcTablePtr_Table,             (void*)0x800FEE70,             (void*)0x800FF030,           (void*)0xFFFFFFFF,      (void*)0x800FF4B0);
 VERSIONED_TABLE(mainCode_Table,                 (void*)0x800110A0,             (void*)0x800110A0,           (void*)0xFFFFFFFF,      (void*)0x800116E0);
+VERSIONED_TABLE(engMsg_Table,                   (void*)0x92D000,               (void*)0x92D000,             (void*)0xFFFFFFFF,      (void*)0x92D000);
 
 void Audio_PlaySfxGeneral_Versioned(u8 gameVer, u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd)
 {
